@@ -1,7 +1,7 @@
 export type Ad = {
   id: number;
   title: string;
-  description: string;
+  description?: string;
   owner: string;
   price: number;
   picture: string;
