@@ -1,15 +1,5 @@
 import express from "express";
-
-type Ad = {
-  id: number;
-  title: string;
-  description: string;
-  owner: string;
-  price: number;
-  picture: string;
-  location: string;
-  createdAt: string;
-};
+import { Ad } from "./types";
 
 const app = express();
 
@@ -53,6 +43,52 @@ app.post("/ads", (req, res) => {
   res.json({
     id: ad.id,
   });
+});
+
+app.delete("/ads/:id", (req, res) => {
+  const id = Number(req.params.id);
+
+  /* const index = ads.findIndex((ad) => {
+    return ad.id === id;
+  }); */
+  let index = -1;
+  for (let i = 0; i < ads.length; i++) {
+    if (ads[i].id === id) {
+      index = i;
+      break;
+    }
+  }
+
+  ads.splice(index, 1);
+
+  res.json({
+    id: id,
+  });
+});
+
+// TODO, should edit the whole object
+app.put("/ads/:id", (req, res) => {});
+
+// partial edit
+app.patch("/ads/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const values = req.body;
+
+  // const adToEdit = ads.find(ad => ad.id === id);
+  let adToEdit: Ad | undefined;
+  for (const ad of ads) {
+    if (ad.id === id) {
+      adToEdit = ad;
+      break;
+    }
+  }
+
+  if (adToEdit) {
+    Object.assign(adToEdit, values, { id: adToEdit.id });
+    res.json(adToEdit);
+  } else {
+    res.status(404).send();
+  }
 });
 
 app.listen(5000, () => {

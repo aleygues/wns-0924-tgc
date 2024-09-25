@@ -14,3 +14,17 @@ Content-Type: application/json
   "location": "Villeurbanne",
   "createdAt": "2023-09-05T10:13:14.755Z"
 }
+
+###
+
+PATCH http://127.0.0.1:5000/ads/1
+Content-Type: application/json
+
+{
+  "id": 2,
+  "location": "Villeurbanne"
+}
+
+###
+
+DELETE http://127.0.0.1:5000/ads/2
