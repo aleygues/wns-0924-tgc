@@ -1,15 +1,19 @@
 import express from "express";
-import { Ad } from "./types";
+import { Ad, Category } from "./types";
 import sqlite3 from "sqlite3";
 
 const db = new sqlite3.Database("db.sqlite");
+db.run("PRAGMA foreign_keys = ON");
 
 const app = express();
 
 app.use(express.json());
 
-app.get("/ads", (req, res) => {
-  db.all("SELECT * FROM ad", (err, rows: Ad[]) => {
+/**
+ * CATEGORIES ENDPOINTS
+ */
+app.get("/categories", (req, res) => {
+  db.all("SELECT id, name FROM category", (err, rows: Category[]) => {
     if (err) {
       res.status(500).send();
     } else {
@@ -18,11 +22,78 @@ app.get("/ads", (req, res) => {
   });
 });
 
+app.post("/categories", (req, res) => {
+  db.run("INSERT INTO category(name) VALUES (?)", [req.body.name], () => {
+    res.status(204).send();
+  });
+});
+
+app.delete("/categories/:id", (req, res) => {
+  const id = Number(req.params.id);
+
+  db.run("DELETE FROM category WHERE id=?", [id], (err) => {
+    if (err) {
+      console.log(err);
+      res.status(500).send();
+    } else {
+      res.status(204).send();
+    }
+  });
+});
+
+app.put("/categories/:id", (req, res) => {
+  const id = Number(req.params.id);
+
+  db.run(
+    "UPDATE category SET name=? WHERE id=?",
+    [req.body.name, id],
+    (err) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send();
+      } else {
+        res.status(204).send();
+      }
+    }
+  );
+});
+
+/**
+ * ADS ENDPOINTS
+ */
+app.get("/ads", (req, res) => {
+  db.all(
+    `
+    SELECT 
+      ad.id AS id,
+      category.id AS categoryId, 
+      name AS categoryName,
+      title, 
+      description, 
+      owner, 
+      location, 
+      picture, 
+      createdAt
+    FROM 
+      ad 
+      LEFT JOIN category ON category.id = ad.categoryId
+    `,
+    (err, rows: Ad[]) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send();
+      } else {
+        res.json(rows);
+      }
+    }
+  );
+});
+
 // get one ad
 
 app.post("/ads", (req, res) => {
   db.run(
-    "INSERT INTO ad(title, description, owner, price, picture, location, createdAt) VALUES (?, ?, ?, ?, ?, ?, ?)",
+    "INSERT INTO ad(title, description, owner, price, picture, location, categoryId, createdAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
     [
       req.body.title,
       req.body.description,
@@ -30,10 +101,16 @@ app.post("/ads", (req, res) => {
       req.body.price,
       req.body.picture,
       req.body.location,
+      req.body.categoryId,
       new Date(),
     ],
-    () => {
-      res.status(204).send();
+    (err) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send();
+      } else {
+        res.status(204).send();
+      }
     }
   );
 });
@@ -41,8 +118,13 @@ app.post("/ads", (req, res) => {
 app.delete("/ads/:id", (req, res) => {
   const id = Number(req.params.id);
 
-  db.run("DELETE FROM ad WHERE id=?", [id], () => {
-    res.status(204).send();
+  db.run("DELETE FROM ad WHERE id=?", [id], (err) => {
+    if (err) {
+      console.log(err);
+      res.status(500).send();
+    } else {
+      res.status(204).send();
+    }
   });
 });
 
@@ -52,7 +134,7 @@ app.put("/ads/:id", (req, res) => {
   const id = Number(req.params.id);
 
   db.run(
-    "UPDATE ad SET title=?, description=?, owner=?, price=?, picture=?, location=? WHERE id=?",
+    "UPDATE ad SET title=?, description=?, owner=?, price=?, picture=?, location=?, categoryId=? WHERE id=?",
     [
       req.body.title,
       req.body.description,
@@ -60,10 +142,16 @@ app.put("/ads/:id", (req, res) => {
       req.body.price,
       req.body.picture,
       req.body.location,
+      req.body.categoryId,
       id,
     ],
-    () => {
-      res.status(204).send();
+    (err) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send();
+      } else {
+        res.status(204).send();
+      }
     }
   );
 });
@@ -93,8 +181,13 @@ app.patch("/ads/:id", (req, res) => {
   sqlQuery = sqlQuery.slice(0, sqlQuery.length - 2) + " WHERE id=?";
   params.push(id);
 
-  db.run(sqlQuery, params, () => {
-    res.status(204).send();
+  db.run(sqlQuery, params, (err) => {
+    if (err) {
+      console.log(err);
+      res.status(500).send();
+    } else {
+      res.status(204).send();
+    }
   });
 });
 

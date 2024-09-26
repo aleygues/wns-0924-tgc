@@ -1,0 +1,23 @@
+GET http://127.0.0.1:5000/categories
+
+###
+
+POST http://127.0.0.1:5000/categories
+Content-Type: application/json
+
+{
+  "name": "Vélos"
+}
+
+###
+
+PUT http://127.0.0.1:5000/categories/2
+Content-Type: application/json
+
+{
+  "name": "Vêtements d'occasion"
+}
+
+###
+
+DELETE http://127.0.0.1:5000/categories/3

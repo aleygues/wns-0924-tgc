@@ -1,0 +1,44 @@
+GET http://127.0.0.1:5000/ads
+
+###
+
+POST http://127.0.0.1:5000/ads
+Content-Type: application/json
+
+{
+  "title": "Rose bike",
+  "description": "It's a red bike",
+  "owner": "aurelien",
+  "price": 10000,
+  "picture": "",
+  "location": "Villeurbanne"
+}
+
+###
+
+PATCH http://127.0.0.1:5000/ads/2
+Content-Type: application/json
+
+{
+  "title": "Red bike",
+  "description": "This is a super bike!",
+  "price": 200
+}
+
+###
+
+PUT http://127.0.0.1:5000/ads/2
+Content-Type: application/json
+
+{
+  "title": "Rose bike",
+  "description": "It's a red bike",
+  "owner": "aurelien",
+  "price": 10000,
+  "picture": "",
+  "location": "Villeurbanne"
+}
+
+###
+
+DELETE http://127.0.0.1:5000/ads/8
