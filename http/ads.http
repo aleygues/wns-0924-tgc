@@ -11,7 +11,8 @@ Content-Type: application/json
   "owner": "aurelien",
   "price": 10000,
   "picture": "",
-  "location": "Villeurbanne"
+  "location": "Villeurbanne",
+  "categoryId": 8
 }
 
 ###
