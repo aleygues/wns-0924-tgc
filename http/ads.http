@@ -6,18 +6,17 @@ POST http://127.0.0.1:5000/ads
 Content-Type: application/json
 
 {
-  "title": "Rose bike",
+  "title": "Super beau vélo de route",
   "description": "It's a red bike",
-  "owner": "aurelien",
+  "owner": "aurelien@aleygues.fr",
   "price": 10000,
-  "picture": "",
-  "location": "Villeurbanne",
-  "categoryId": 8
+  "picture": "https://cdn.pixabay.com/photo/2020/03/23/11/19/bike-4960516_1280.jpg",
+  "location": "Villeurbanne"
 }
 
 ###
 
-PATCH http://127.0.0.1:5000/ads/2
+PATCH http://127.0.0.1:5000/ads/1
 Content-Type: application/json
 
 {
@@ -28,7 +27,7 @@ Content-Type: application/json
 
 ###
 
-PUT http://127.0.0.1:5000/ads/2
+PUT http://127.0.0.1:5000/ads/3
 Content-Type: application/json
 
 {
@@ -36,10 +35,9 @@ Content-Type: application/json
   "description": "It's a red bike",
   "owner": "aurelien",
   "price": 10000,
-  "picture": "",
-  "location": "Villeurbanne"
+  "picture": ""
 }
 
 ###
 
-DELETE http://127.0.0.1:5000/ads/8
+DELETE http://127.0.0.1:5000/ads/1
