@@ -3,6 +3,7 @@ import express from "express";
 import { datasource } from "./datasource";
 import { router as AdsRouter } from "./controllers/ads";
 import { router as CategoriesRouter } from "./controllers/categories";
+import { router as TagsRouter } from "./controllers/tags";
 
 const app = express();
 
@@ -10,6 +11,7 @@ app.use(express.json());
 
 app.use("/ads", AdsRouter);
 app.use("/categories", CategoriesRouter);
+app.use("/tags", TagsRouter);
 
 async function initialize() {
   await datasource.initialize();

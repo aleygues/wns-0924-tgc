@@ -1,10 +1,34 @@
 import { IsEmail, IsUrl, Length, Max, Min } from "class-validator";
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {
+  BaseEntity,
+  BeforeInsert,
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+import { Category } from "./Category";
+import { Tag } from "./Tag";
 
 @Entity()
 export class Ad extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
+
+  @ManyToOne(
+    () => {
+      return Category;
+    },
+    (category) => category.ads,
+    { eager: true }
+  )
+  category!: Category;
+
+  @ManyToMany(() => Tag, (tag) => tag.ads)
+  @JoinTable()
+  tags!: Tag[];
 
   @Column()
   @Length(10, 100, { message: "Title must be between 10 and 100 chars" })
@@ -31,4 +55,9 @@ export class Ad extends BaseEntity {
 
   @Column()
   createdAt!: Date;
+
+  @BeforeInsert()
+  private setCreatedAt() {
+    this.createdAt = new Date();
+  }
 }

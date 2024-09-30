@@ -4,7 +4,11 @@ import { Category } from "../entities/Category";
 export const router = express.Router();
 
 router.get("", async (req, res) => {
-  const categories = await Category.find();
+  const categories = await Category.find({
+    relations: {
+      ads: true,
+    },
+  });
   res.json(categories);
 });
 

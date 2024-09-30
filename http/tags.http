@@ -1,0 +1,23 @@
+GET http://127.0.0.1:5000/tags
+
+###
+
+POST http://127.0.0.1:5000/tags
+Content-Type: application/json
+
+{
+  "name": "Musculaire"
+}
+
+###
+
+PUT http://127.0.0.1:5000/tags/5
+Content-Type: application/json
+
+{
+  "name": "Vêtements d'occasion"
+}
+
+###
+
+DELETE http://127.0.0.1:5000/tags/3

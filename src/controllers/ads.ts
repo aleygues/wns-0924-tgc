@@ -5,14 +5,33 @@ import { validate } from "class-validator";
 export const router = express.Router();
 
 router.get("", async (req, res) => {
-  const ads = await Ad.find();
+  const ads = await Ad.find({
+    relations: {
+      //category: true,
+      tags: true,
+    },
+  });
   res.json(ads);
+});
+
+router.get("/:id", async (req, res) => {
+  const ad = await Ad.findOne({
+    where: {
+      id: Number(req.params.id),
+    },
+    relations: {
+      category: true,
+      tags: true
+    }
+  });
+
+  res.json(ad);
 });
 
 router.post("", async (req, res) => {
   try {
     const newAd = new Ad();
-    Object.assign(newAd, req.body, { createdAt: new Date() });
+    Object.assign(newAd, req.body);
 
     const errors = await validate(newAd);
     if (errors.length) {
@@ -48,15 +67,15 @@ router.put("/:id", async (req, res) => {
     const id = Number(req.params.id);
     const ad = await Ad.findOneBy({ id });
     if (ad !== null) {
-      // should do something to be a PUT
-      Object.assign(ad, req.body);
+      const newAd = new Ad();
+      Object.assign(newAd, req.body, { id: ad.id, createdAt: ad.createdAt });
 
-      const errors = await validate(ad);
+      const errors = await validate(newAd);
       if (errors.length) {
         res.status(400).json(errors);
       } else {
-        await ad.save();
-        res.json(ad);
+        await newAd.save();
+        res.json(newAd);
       }
     } else {
       res.status(404).send();

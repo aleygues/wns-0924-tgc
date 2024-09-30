@@ -11,7 +11,9 @@ Content-Type: application/json
   "owner": "aurelien@aleygues.fr",
   "price": 10000,
   "picture": "https://cdn.pixabay.com/photo/2020/03/23/11/19/bike-4960516_1280.jpg",
-  "location": "Villeurbanne"
+  "location": "Villeurbanne",
+  "category": { "id": 1 },
+  "tags": [{ "id": 1 }]
 }
 
 ###
@@ -27,15 +29,18 @@ Content-Type: application/json
 
 ###
 
-PUT http://127.0.0.1:5000/ads/3
+PUT http://127.0.0.1:5000/ads/11
 Content-Type: application/json
 
 {
-  "title": "Rose bike",
+  "title": "Super beau vélo de route",
   "description": "It's a red bike",
-  "owner": "aurelien",
+  "owner": "aurelien@aleygues.fr",
   "price": 10000,
-  "picture": ""
+  "picture": "https://cdn.pixabay.com/photo/2020/03/23/11/19/bike-4960516_1280.jpg",
+  "location": "",
+  "category": null,
+  "tags": []
 }
 
 ###
