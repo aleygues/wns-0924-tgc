@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import express from "express";
-import { datasource } from "./datasource";
+import datasource from "./datasource";
 import { router as AdsRouter } from "./controllers/ads";
 import { router as CategoriesRouter } from "./controllers/categories";
 import { router as TagsRouter } from "./controllers/tags";

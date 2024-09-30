@@ -5,7 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "tsnd ./src/index.ts"
+    "start": "tsnd ./src/index.ts",
+    "migration:create": "typeorm-ts-node-commonjs migration:create",
+    "migration:generate": "typeorm-ts-node-commonjs migration:generate -d src/datasource.ts",
+    "migration:up": "typeorm-ts-node-commonjs migration:run -d src/datasource.ts",
+    "migration:down": "typeorm-ts-node-commonjs migration:revert -d src/datasource.ts"
   },
   "author": "",
   "license": "ISC",

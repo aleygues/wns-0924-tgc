@@ -1,9 +1,13 @@
 import { DataSource } from "typeorm";
 
-export const datasource = new DataSource({
+const datasource = new DataSource({
   type: "sqlite",
   database: "db.sqlite",
   entities: ["./src/entities/*.ts"],
-  synchronize: true,
+  synchronize: false,
+  migrations: ["./migrations/*.ts"],
+  migrationsTableName: "migrations",
   logging: true,
 });
+
+export default datasource;
