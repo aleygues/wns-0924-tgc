@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export type AdProps = {
   title: string;
   price: number;
@@ -5,16 +7,23 @@ export type AdProps = {
   id: number;
 };
 
-export function Ad(props: AdProps) {
+export function Ad(
+  props: AdProps & {
+    onAddToCart: () => void;
+  }
+) {
   return (
     <div className="ad-card-container">
-      <a className="ad-card-link" href={`/ads/${props.id}`}>
+      <Link className="ad-card-link" to={`/ads/${props.id}`}>
         <img className="ad-card-image" src={props.picture} />
         <div className="ad-card-text">
           <div className="ad-card-title">{props.title}</div>
           <div className="ad-card-price">{props.price} €</div>
         </div>
-      </a>
+      </Link>
+      <button className="button" onClick={props.onAddToCart}>
+        Ajouter au panier
+      </button>
     </div>
   );
 }

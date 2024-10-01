@@ -1,15 +1,22 @@
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
-import { Navbar } from "./components/Navbar";
-import { RecentAds } from "./components/RecentAds";
+import { HomePage } from "./pages/Home";
+import { AboutPage } from "./pages/About";
+import { PageLayout } from "./components/Layout";
+import { AdPage } from "./pages/Ad";
 
 function App() {
   return (
-    <body>
-      <Navbar />
-      <main className="main-content">
-        <RecentAds />
-      </main>
-    </body>
+    <BrowserRouter>
+      <Routes>
+        <Route Component={PageLayout}>
+          <Route path="/" Component={HomePage} />
+          <Route path="/ads/:id" Component={AdPage} />
+          <Route path="/about" Component={AboutPage} />
+          <Route path="*" Component={() => <Navigate to="/" />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 
