@@ -7,7 +7,7 @@ export const router = express.Router();
 router.get("", async (req, res) => {
   const ads = await Ad.find({
     relations: {
-      //category: true,
+      category: true,
       tags: true,
     },
   });
@@ -21,8 +21,8 @@ router.get("/:id", async (req, res) => {
     },
     relations: {
       category: true,
-      tags: true
-    }
+      tags: true,
+    },
   });
 
   res.json(ad);

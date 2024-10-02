@@ -21,8 +21,8 @@ export class Ad extends BaseEntity {
     () => {
       return Category;
     },
-    (category) => category.ads,
-    { eager: true }
+    (category) => category.ads
+    /* { eager: true } */
   )
   category!: Category;
 
