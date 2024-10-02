@@ -18,7 +18,9 @@ export function Ad(
         <img className="ad-card-image" src={props.picture} />
         <div className="ad-card-text">
           <div className="ad-card-title">{props.title}</div>
-          <div className="ad-card-price">{props.price} €</div>
+          <div className="ad-card-price">
+            {(props.price / 100).toFixed(2)} €
+          </div>
         </div>
       </Link>
       <button className="button" onClick={props.onAddToCart}>

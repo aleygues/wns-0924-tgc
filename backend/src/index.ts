@@ -1,5 +1,6 @@
 import "reflect-metadata";
 import express from "express";
+import cors from "cors";
 import { datasource } from "./datasource";
 import { router as AdsRouter } from "./controllers/ads";
 import { router as CategoriesRouter } from "./controllers/categories";
@@ -8,6 +9,7 @@ import { router as TagsRouter } from "./controllers/tags";
 const app = express();
 
 app.use(express.json());
+app.use(cors()); // openbar
 
 app.use("/ads", AdsRouter);
 app.use("/categories", CategoriesRouter);
