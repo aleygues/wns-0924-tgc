@@ -1,9 +1,14 @@
 import { Link } from "react-router-dom";
+import { CategoryProps } from "./Category";
 
 export type AdProps = {
   title: string;
   price: number;
   picture: string;
+  description: string;
+  owner: string;
+  location: string;
+  category?: CategoryProps;
   id: number;
 };
 
