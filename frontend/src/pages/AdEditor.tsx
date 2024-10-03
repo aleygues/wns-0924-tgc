@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { CategoryProps } from "../components/Category";
 import axios from "axios";
-import { Tag } from "../types";
+import { AdType, CategoryType, TagType } from "../types";
 import { useNavigate } from "react-router-dom";
-import { AdProps } from "../components/Ad";
+import { CategoryEditor } from "../components/CategoryEditor";
+import { TagEditor } from "../components/TagEditor";
 
 export function AdEditorPage() {
   const navigate = useNavigate();
@@ -17,31 +17,32 @@ export function AdEditorPage() {
   const [categoryId, setCategoryId] = useState<number>();
   const [tagsIds, setTagsIds] = useState<number[]>([]);
 
-  const [categories, setCategories] = useState<CategoryProps[]>([]);
-  const [tags, setTags] = useState<Tag[]>([]);
-  useEffect(() => {
-    async function fetch() {
-      {
-        const result = await axios.get<CategoryProps[]>(
-          "http://127.0.0.1:5000/categories"
-        );
-        setCategories(result.data);
-        if (result.data.length !== 0) {
-          setCategoryId(result.data[0].id);
-        }
-      }
+  const [categories, setCategories] = useState<CategoryType[]>([]);
+  const [tags, setTags] = useState<TagType[]>([]);
 
-      {
-        const result = await axios.get<Tag[]>("http://127.0.0.1:5000/tags");
-        setTags(result.data);
-      }
+  async function fetchCategories() {
+    const result = await axios.get<CategoryType[]>(
+      "http://127.0.0.1:5000/categories"
+    );
+    setCategories(result.data);
+    if (result.data.length !== 0) {
+      setCategoryId(result.data[0].id);
     }
-    fetch();
+  }
+
+  async function fetchTags() {
+    const result = await axios.get<TagType[]>("http://127.0.0.1:5000/tags");
+    setTags(result.data);
+  }
+
+  useEffect(() => {
+    fetchCategories();
+    fetchTags();
   }, []);
 
   async function doSubmit() {
     try {
-      const result = await axios.post<AdProps>("http://localhost:5000/ads", {
+      const result = await axios.post<AdType>("http://localhost:5000/ads", {
         title,
         description,
         price,
@@ -56,6 +57,9 @@ export function AdEditorPage() {
       console.error(err);
     }
   }
+
+  const [showCategoryEditor, setShowCategoryEditor] = useState(false);
+  const [showTagEditor, setShowTagEditor] = useState(false);
 
   return (
     <div>
@@ -132,6 +136,22 @@ export function AdEditorPage() {
             ))}
           </select>
         </label>
+        <button
+          type="button"
+          onClick={() => {
+            setShowCategoryEditor(!showCategoryEditor);
+          }}
+        >
+          {showCategoryEditor === true ? "Cacher" : "Nouvelle catégorie"}
+        </button>
+        {showCategoryEditor && (
+          <CategoryEditor
+            onCategoryCreated={() => {
+              setShowCategoryEditor(false);
+              fetchCategories();
+            }}
+          />
+        )}
         <br />
         <div>
           Tags :
@@ -168,6 +188,22 @@ export function AdEditorPage() {
             </label>
           ))}
         </div>
+        <button
+          type="button"
+          onClick={() => {
+            setShowTagEditor(!showTagEditor);
+          }}
+        >
+          {showTagEditor === true ? "Cacher" : "Nouveau tag"}
+        </button>
+        {showTagEditor && (
+          <TagEditor
+            onTagCreated={() => {
+              setShowTagEditor(false);
+              fetchTags();
+            }}
+          />
+        )}
         <br />
         <br />
         <button>Créer mon annonce</button>

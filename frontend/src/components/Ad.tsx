@@ -1,20 +1,9 @@
 import { Link } from "react-router-dom";
-import { CategoryProps } from "./Category";
-
-export type AdProps = {
-  title: string;
-  price: number;
-  picture: string;
-  description: string;
-  owner: string;
-  location: string;
-  category?: CategoryProps;
-  id: number;
-};
+import { AdType } from "../types";
 
 export function Ad(
-  props: AdProps & {
-    onAddToCart: () => void;
+  props: AdType & {
+    onAddToCart?: () => void;
   }
 ) {
   return (
@@ -26,11 +15,16 @@ export function Ad(
           <div className="ad-card-price">
             {(props.price / 100).toFixed(2)} €
           </div>
+          {props.tags.map((tag) => (
+            <p>{tag.name}</p>
+          ))}
         </div>
       </Link>
-      <button className="button" onClick={props.onAddToCart}>
-        Ajouter au panier
-      </button>
+      {props.onAddToCart && (
+        <button className="button" onClick={props.onAddToCart}>
+          Ajouter au panier
+        </button>
+      )}
     </div>
   );
 }

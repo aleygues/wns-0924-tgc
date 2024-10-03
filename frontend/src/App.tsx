@@ -5,6 +5,7 @@ import { AboutPage } from "./pages/About";
 import { PageLayout } from "./components/Layout";
 import { AdPage } from "./pages/Ad";
 import { AdEditorPage } from "./pages/AdEditor";
+import { CategoryPage } from "./pages/Category";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
       <Routes>
         <Route Component={PageLayout}>
           <Route path="/" Component={HomePage} />
+          <Route path="/categories/:id" Component={CategoryPage} />
           <Route path="/ads/:id" Component={AdPage} />
           <Route path="/ads/new" Component={AdEditorPage} />
           <Route path="/about" Component={AboutPage} />
