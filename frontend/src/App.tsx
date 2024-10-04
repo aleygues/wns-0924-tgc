@@ -15,6 +15,7 @@ function App() {
           <Route path="/" Component={HomePage} />
           <Route path="/categories/:id" Component={CategoryPage} />
           <Route path="/ads/:id" Component={AdPage} />
+          <Route path="/ads/:id/edit" Component={AdEditorPage} />
           <Route path="/ads/new" Component={AdEditorPage} />
           <Route path="/about" Component={AboutPage} />
           <Route path="*" Component={() => <Navigate to="/" />} />

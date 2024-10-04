@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Ad } from "../components/Ad";
 import { CategoryType } from "../types";
+import AdsContainer from "../components/AdsContainer";
 
 export function CategoryPage() {
   const params = useParams<{ id: string }>();
@@ -35,22 +36,22 @@ export function CategoryPage() {
   return (
     <>
       <h2>{category?.name}</h2>
-      <section className="recent-ads">
-        {category?.ads.map((ad) => (
-          <div key={ad.id}>
-            <Ad
-              id={ad.id}
-              picture={ad.picture}
-              title={ad.title}
-              price={ad.price}
-              description={ad.description}
-              owner={ad.owner}
-              location={ad.location}
-              tags={ad.tags}
-            />
-          </div>
+      <AdsContainer>
+        {category?.ads?.map((ad) => (
+          <Ad
+            key={ad.id}
+            id={ad.id}
+            picture={ad.picture}
+            title={ad.title}
+            price={ad.price}
+            description={ad.description}
+            owner={ad.owner}
+            location={ad.location}
+            tags={ad.tags}
+            important
+          />
         ))}
-      </section>
+      </AdsContainer>
     </>
   );
 }

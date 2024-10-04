@@ -27,6 +27,10 @@ export function AdPage() {
     }
   }
 
+  function onUpdate() {
+    navigate(`/ads/${id}/edit`);
+  }
+
   if (ad === undefined) {
     return <p>Chargement</p>;
   }
@@ -37,6 +41,7 @@ export function AdPage() {
       <p>{ad.description}</p>
       <p>{ad.category?.name}</p>
       <button onClick={doDelete}>Supprimer l'offre</button>
+      <button onClick={onUpdate}>Modifier l'offre</button>
     </div>
   );
 }

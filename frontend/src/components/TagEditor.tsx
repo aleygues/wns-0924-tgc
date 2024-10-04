@@ -2,16 +2,16 @@ import axios from "axios";
 import { useState } from "react";
 import { TagType } from "../types";
 
-export function TagEditor(props: { onTagCreated: () => void }) {
+export function TagEditor(props: { onTagCreated: (newId: number) => void }) {
   const [name, setName] = useState("");
 
   async function doSubmit() {
     try {
-      await axios.post<TagType>("http://localhost:5000/tags", {
+      const result = await axios.post<TagType>("http://localhost:5000/tags", {
         name,
       });
       setName("");
-      props.onTagCreated();
+      props.onTagCreated(result.data.id);
     } catch (err) {
       console.error(err);
     }

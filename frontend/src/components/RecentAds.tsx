@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Ad } from "./Ad";
 import axios from "axios";
 import { AdType } from "../types";
+import AdsContainer from "./AdsContainer";
 
 export function RecentAds() {
   const [totalPrice, setTotalPrice] = useState(0);
@@ -19,23 +20,22 @@ export function RecentAds() {
     <>
       <h2>Annonces récentes</h2>
       Prix total : {totalPrice}
-      <section className="recent-ads">
+      <AdsContainer>
         {ads.map((ad) => (
-          <div key={ad.id}>
-            <Ad
-              id={ad.id}
-              picture={ad.picture}
-              title={ad.title}
-              price={ad.price}
-              description={ad.description}
-              owner={ad.owner}
-              location={ad.location}
-              tags={ad.tags}
-              onAddToCart={() => setTotalPrice(totalPrice + ad.price)}
-            />
-          </div>
+          <Ad
+            key={ad.id}
+            id={ad.id}
+            picture={ad.picture}
+            title={ad.title}
+            price={ad.price}
+            description={ad.description}
+            owner={ad.owner}
+            location={ad.location}
+            tags={ad.tags}
+            onAddToCart={() => setTotalPrice(totalPrice + ad.price)}
+          />
         ))}
-      </section>
+      </AdsContainer>
     </>
   );
 }

@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Category, CategoryProps } from "./Category";
+import { Category } from "./Category";
 import axios from "axios";
+import { CategoryType } from "../types";
 
 export function Navbar() {
-  const [categories, setCategories] = useState<CategoryProps[]>([]);
+  const [categories, setCategories] = useState<CategoryType[]>([]);
 
   useEffect(() => {
     async function fetch() {
-      const result = await axios.get<CategoryProps[]>(
+      const result = await axios.get<CategoryType[]>(
         "http://127.0.0.1:5000/categories"
       );
       setCategories(result.data);

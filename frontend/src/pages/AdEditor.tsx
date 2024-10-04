@@ -1,21 +1,57 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { AdType, CategoryType, TagType } from "../types";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { CategoryEditor } from "../components/CategoryEditor";
 import { TagEditor } from "../components/TagEditor";
 
 export function AdEditorPage() {
   const navigate = useNavigate();
+  const params = useParams<{ id: string }>();
+  const id = params.id && Number(params.id);
 
-  const [title, setTitle] = useState("Super vélo bleu");
-  const [description, setDescription] = useState("Il est très beau");
-  const [price, setPrice] = useState(10000);
-  const [location, setLocation] = useState("Villeurbanne");
-  const [picture, setPicture] = useState("https://google.com");
-  const [owner, setOwner] = useState("moi@aleygues.fr");
+  const [ad, setAd] = useState<AdType>();
+
+  useEffect(() => {
+    if (id) {
+      async function fetch() {
+        const result = await axios.get<AdType>(
+          `http://localhost:5000/ads/${id}`
+        );
+        setAd(result.data);
+      }
+      fetch();
+    }
+  }, [id]);
+
+  const [error, setError] = useState<string>();
+
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [price, setPrice] = useState(0);
+  const [location, setLocation] = useState("");
+  const [picture, setPicture] = useState("");
+  const [owner, setOwner] = useState("");
   const [categoryId, setCategoryId] = useState<number>();
   const [tagsIds, setTagsIds] = useState<number[]>([]);
+
+  useEffect(() => {
+    if (ad) {
+      setTitle(ad.title);
+      setDescription(ad.description);
+      setPrice(ad.price);
+      setLocation(ad.location);
+      setPicture(ad.picture);
+      setOwner(ad.owner);
+      setCategoryId(ad.category?.id);
+
+      const tagsIds: number[] = [];
+      for (const tag of ad.tags) {
+        tagsIds.push(tag.id);
+      }
+      setTagsIds(tagsIds);
+    }
+  }, [ad]);
 
   const [categories, setCategories] = useState<CategoryType[]>([]);
   const [tags, setTags] = useState<TagType[]>([]);
@@ -41,28 +77,53 @@ export function AdEditorPage() {
   }, []);
 
   async function doSubmit() {
+    setError(undefined);
     try {
-      const result = await axios.post<AdType>("http://localhost:5000/ads", {
-        title,
-        description,
-        price,
-        location,
-        picture,
-        owner,
-        category: categoryId ? { id: categoryId } : null,
-        tags: tagsIds.map((id) => ({ id })),
-      });
-      navigate(`/ads/${result.data.id}`, { replace: true });
+      if (ad) {
+        const result = await axios.put<AdType>(
+          `http://localhost:5000/ads/${ad.id}`,
+          {
+            title,
+            description,
+            price,
+            location,
+            picture,
+            owner,
+            category: categoryId ? { id: categoryId } : null,
+            tags: tagsIds.map((id) => ({ id })),
+          }
+        );
+        navigate(`/ads/${result.data.id}`, { replace: true });
+      } else {
+        const result = await axios.post<AdType>("http://localhost:5000/ads", {
+          title,
+          description,
+          price,
+          location,
+          picture,
+          owner,
+          category: categoryId ? { id: categoryId } : null,
+          tags: tagsIds.map((id) => ({ id })),
+        });
+        navigate(`/ads/${result.data.id}`, { replace: true });
+      }
     } catch (err) {
       console.error(err);
+      // err.response.data[0].constraint
+      setError("Une erreur est survenue");
     }
   }
 
   const [showCategoryEditor, setShowCategoryEditor] = useState(false);
   const [showTagEditor, setShowTagEditor] = useState(false);
 
+  if (id && !ad) {
+    return <p>Chargement</p>;
+  }
+
   return (
     <div>
+      {error && <p style={{ color: "red" }}>{error}</p>}
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -70,8 +131,9 @@ export function AdEditorPage() {
         }}
       >
         <label>
-          Titre :
+          Titre * :
           <input
+            required
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
@@ -146,9 +208,10 @@ export function AdEditorPage() {
         </button>
         {showCategoryEditor && (
           <CategoryEditor
-            onCategoryCreated={() => {
+            onCategoryCreated={async (id) => {
               setShowCategoryEditor(false);
-              fetchCategories();
+              await fetchCategories();
+              setCategoryId(id);
             }}
           />
         )}
@@ -198,15 +261,17 @@ export function AdEditorPage() {
         </button>
         {showTagEditor && (
           <TagEditor
-            onTagCreated={() => {
+            onTagCreated={async (id) => {
               setShowTagEditor(false);
-              fetchTags();
+              await fetchTags();
+              tagsIds.push(id);
+              setTagsIds([...tagsIds]);
             }}
           />
         )}
         <br />
         <br />
-        <button>Créer mon annonce</button>
+        <button>{ad ? "Modifier mon annonce" : "Créer mon annonce"}</button>
       </form>
     </div>
   );

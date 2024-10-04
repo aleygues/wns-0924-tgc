@@ -1,18 +1,23 @@
 import axios from "axios";
 import { useState } from "react";
-import { CategoryProps } from "./Category";
+import { CategoryType } from "../types";
 
-export function CategoryEditor(props: { onCategoryCreated: () => void }) {
+export function CategoryEditor(props: {
+  onCategoryCreated: (newId: number) => void;
+}) {
   const [name, setName] = useState("");
 
   async function doSubmit() {
     try {
-      await axios.post<CategoryProps>("http://localhost:5000/categories", {
-        name,
-      });
+      const result = await axios.post<CategoryType>(
+        "http://localhost:5000/categories",
+        {
+          name,
+        }
+      );
       //
       setName("");
-      props.onCategoryCreated();
+      props.onCategoryCreated(result.data.id);
     } catch (err) {
       console.error(err);
     }
