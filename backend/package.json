@@ -15,11 +15,15 @@
     "ts-node-dev": "^2.0.0"
   },
   "dependencies": {
+    "@apollo/server": "^4.11.2",
     "class-validator": "^0.14.1",
     "cors": "^2.8.5",
     "express": "^4.21.0",
+    "graphql": "^16.9.0",
+    "graphql-scalars": "^1.23.0",
     "reflect-metadata": "^0.2.2",
     "sqlite3": "^5.1.7",
+    "type-graphql": "^2.0.0-rc.2",
     "typeorm": "^0.3.20"
   }
 }

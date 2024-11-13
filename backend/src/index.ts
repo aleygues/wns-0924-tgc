@@ -1,27 +1,23 @@
 import "reflect-metadata";
-import express from "express";
-import cors from "cors";
 import { datasource } from "./datasource";
-import { router as AdsRouter } from "./controllers/ads";
-import { router as CategoriesRouter } from "./controllers/categories";
-import { router as TagsRouter } from "./controllers/tags";
-
-const app = express();
-
-app.use(express.json());
-app.use(cors()); // openbar
-
-app.use("/ads", AdsRouter);
-app.use("/categories", CategoriesRouter);
-app.use("/tags", TagsRouter);
+import { buildSchema } from "type-graphql";
+import { PicturesResolver } from "./resolvers/Pictures";
+import { ApolloServer } from "@apollo/server";
+import { startStandaloneServer } from "@apollo/server/standalone";
+import { CategoriesResolver } from "./resolvers/Categories";
 
 async function initialize() {
   await datasource.initialize();
   console.log("Datasource is connected");
 
-  app.listen(5000, () => {
-    console.log("Server is running on port 5000 🚀");
+  const schema = await buildSchema({ resolvers: [CategoriesResolver] });
+
+  const server = new ApolloServer({ schema });
+
+  const { url } = await startStandaloneServer(server, {
+    listen: { port: 5000 },
   });
+  console.log(`GraphQL server ready at ${url}`);
 }
 
 initialize();
