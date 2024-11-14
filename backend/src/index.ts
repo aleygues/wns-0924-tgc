@@ -5,12 +5,15 @@ import { PicturesResolver } from "./resolvers/Pictures";
 import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
 import { CategoriesResolver } from "./resolvers/Categories";
+import { AdsResolver } from "./resolvers/Ads";
 
 async function initialize() {
   await datasource.initialize();
   console.log("Datasource is connected");
 
-  const schema = await buildSchema({ resolvers: [CategoriesResolver] });
+  const schema = await buildSchema({
+    resolvers: [CategoriesResolver, AdsResolver],
+  });
 
   const server = new ApolloServer({ schema });
 
