@@ -56,6 +56,11 @@ export class AdsResolver {
     if (ad !== null) {
       Object.assign(ad, data);
 
+      // bug → ad.tags
+      // { id: 1 } → unicity constraint
+      // we should should replace this object with a real tag
+      // Tag { id: 1 } → no bug here
+
       const errors = await validate(ad);
       if (errors.length > 0) {
         throw new Error(`Validation error: ${JSON.stringify(errors)}`);

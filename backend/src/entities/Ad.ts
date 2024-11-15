@@ -1,5 +1,6 @@
 import { IsEmail, IsUrl, Length, Max, Min } from "class-validator";
 import {
+  AfterInsert,
   BaseEntity,
   BeforeInsert,
   Column,
@@ -72,6 +73,11 @@ export class Ad extends BaseEntity {
   @BeforeInsert()
   private setCreatedAt() {
     this.createdAt = new Date();
+  }
+
+  @AfterInsert()
+  private sendNotification() {
+    // sendNotfication()
   }
 }
 

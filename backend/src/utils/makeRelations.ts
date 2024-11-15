@@ -22,6 +22,8 @@ function hasRelation(info: GraphQLResolveInfo, relationName: string) {
   }
 }
 
+// This parse the graphql request and keep only fields
+// with a subselection (which may be relations)
 function parseSelectionSet(
   set: SelectionSetNode,
   levelPossibleRelations: object
@@ -42,6 +44,8 @@ function parseSelectionSet(
   }
 }
 
+// this parse the possible relations keeping only real
+// TypeORM relations
 function checkRelation(
   possibleRelations: object,
   entityRelations: RelationMetadata[],
@@ -67,11 +71,19 @@ function checkRelation(
   }
 }
 
+/**
+ * This extracts TypeORM relations from the GraphQL request
+ * @param info Information about the resolved query (can be obtained with `@Info() info`)
+ * @param entity The TypeORM entity class (used to extract relations)
+ * @returns An object in which each keys is the relation name to satisfy, and its value is the related relations to satisfy
+ */
 export function makeRelations(
   info: GraphQLResolveInfo,
   entity: typeof BaseEntity
 ) {
-  // extract possible relations from graphql request
+  // we want to extract possible asked relations from the graphql request based
+  // on the requested fields and if the field has (or not) subselection
+  // from this answer: https://stackoverflow.com/questions/50548188/graphql-how-to-do-a-join-request-instead-of-many-sequential-request
   const possibleRelations = {};
   const baseSelectionSet = info?.fieldNodes?.[0]?.selectionSet;
   if (!baseSelectionSet) {
@@ -79,6 +91,9 @@ export function makeRelations(
   }
   parseSelectionSet(baseSelectionSet, possibleRelations);
 
+  // but since graphql request may have subselections for something else than SQL relations, we should
+  // parse all possible relations and check if it's a real SQL relation based on the TypeORM entity
+  // from this answer: https://stackoverflow.com/questions/62757637/get-list-of-relations-for-an-entity-in-typeorm
   const repository = entity.getRepository();
   const entityRelations = repository.metadata.relations;
   const relations = {};
@@ -86,3 +101,14 @@ export function makeRelations(
 
   return relations;
 }
+
+/**
+ * example of use:
+ *
+ * @Query(() => [Category])
+ * async function categories(@Info() info: GraphQLResolveInfo): Promise<Category[]> {
+ *   return await Category.find({
+ *     relations: makeRelations(info, Category)
+ *   });
+ * }
+ */

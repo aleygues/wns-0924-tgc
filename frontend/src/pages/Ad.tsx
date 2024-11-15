@@ -1,22 +1,20 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { AdType } from "../types";
+import { useQuery } from "@apollo/client";
+import { queryAd } from "../api/ad";
 
 export function AdPage() {
   const navigate = useNavigate();
   const params = useParams<{ id: string }>();
   const id = Number(params.id);
 
-  const [ad, setAd] = useState<AdType>();
-
-  useEffect(() => {
-    async function fetch() {
-      const result = await axios.get<AdType>(`http://localhost:5000/ads/${id}`);
-      setAd(result.data);
-    }
-    fetch();
-  }, [id]);
+  const { data } = useQuery<{ ad: AdType }>(queryAd, {
+    variables: {
+      id,
+    },
+  });
+  const ad = data?.ad;
 
   async function doDelete() {
     try {
