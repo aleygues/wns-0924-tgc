@@ -115,7 +115,6 @@ export class AdUpdateInput {
   @Field(() => [IdInput], { nullable: true })
   tags!: IdInput[];
 
-  @Length(10, 100, { message: "Title must be between 10 and 100 chars" })
   @Field({ nullable: true })
   title!: string;
 
@@ -125,16 +124,12 @@ export class AdUpdateInput {
   @Field({ nullable: true })
   location!: string;
 
-  @IsEmail()
   @Field({ nullable: true })
   owner!: string;
 
-  @Min(0, { message: "Price must be positive" })
-  @Max(1000000, { message: "Price must be lower than 1000000 cents" })
   @Field(() => Int, { nullable: true })
   price!: number;
 
-  @IsUrl()
   @Field({ nullable: true })
   picture!: string;
 }

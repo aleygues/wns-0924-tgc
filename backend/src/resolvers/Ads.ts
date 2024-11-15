@@ -1,5 +1,6 @@
 import { Arg, ID, Mutation, Query, Resolver } from "type-graphql";
 import { Ad, AdCreateInput, AdUpdateInput } from "../entities/Ad";
+import { validate } from "class-validator";
 
 @Resolver()
 export class AdsResolver {
@@ -36,8 +37,14 @@ export class AdsResolver {
   ): Promise<Ad> {
     const newAd = new Ad();
     Object.assign(newAd, data);
-    await newAd.save();
-    return newAd;
+
+    const errors = await validate(newAd);
+    if (errors.length > 0) {
+      throw new Error(`Validation error: ${JSON.stringify(errors)}`);
+    } else {
+      await newAd.save();
+      return newAd;
+    }
   }
 
   @Mutation(() => Ad, { nullable: true })
@@ -48,8 +55,14 @@ export class AdsResolver {
     const ad = await Ad.findOneBy({ id });
     if (ad !== null) {
       Object.assign(ad, data);
-      await ad.save();
-      return ad;
+
+      const errors = await validate(ad);
+      if (errors.length > 0) {
+        throw new Error(`Validation error: ${JSON.stringify(errors)}`);
+      } else {
+        await ad.save();
+        return ad;
+      }
     } else {
       return null;
     }
