@@ -1,21 +1,14 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Category } from "./Category";
-import axios from "axios";
+import { useQuery } from "@apollo/client";
 import { CategoryType } from "../types";
+import { queryCategories } from "../api/categories";
 
 export function Navbar() {
-  const [categories, setCategories] = useState<CategoryType[]>([]);
-
-  useEffect(() => {
-    async function fetch() {
-      const result = await axios.get<CategoryType[]>(
-        "http://127.0.0.1:5000/categories"
-      );
-      setCategories(result.data);
-    }
-    fetch();
-  }, []);
+  const { data, loading } = useQuery<{ categories: CategoryType[] }>(
+    queryCategories
+  );
+  const categories = data?.categories;
 
   return (
     <header className="header">
@@ -51,7 +44,8 @@ export function Navbar() {
         </Link>
       </div>
       <nav className="categories-navigation">
-        {categories.map((category) => (
+        {loading === true && <p>Chargement</p>}
+        {categories?.map((category) => (
           <Category name={category.name} id={category.id} key={category.id} />
         ))}
       </nav>

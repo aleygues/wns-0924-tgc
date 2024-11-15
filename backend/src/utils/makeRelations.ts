@@ -2,6 +2,13 @@ import { GraphQLResolveInfo, SelectionSetNode } from "graphql";
 import { BaseEntity } from "typeorm";
 import { RelationMetadata } from "typeorm/metadata/RelationMetadata";
 
+/**
+ * Simple approach to check if a key is present in the graphql request
+ * And check if the key has a selection set (subquery)
+ * @param info Information about the resolved query (can be obtained with `@Info() info`)
+ * @param relationName The key name we want to find in the request
+ * @returns True if the key is found (with a subquery)
+ */
 function hasRelation(info: GraphQLResolveInfo, relationName: string) {
   const selections = info?.fieldNodes?.[0]?.selectionSet?.selections;
   if (selections) {

@@ -6,22 +6,30 @@ import { PageLayout } from "./components/Layout";
 import { AdPage } from "./pages/Ad";
 import { AdEditorPage } from "./pages/AdEditor";
 import { CategoryPage } from "./pages/Category";
+import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
+
+const client = new ApolloClient({
+  uri: "http://localhost:5000",
+  cache: new InMemoryCache(),
+});
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route Component={PageLayout}>
-          <Route path="/" Component={HomePage} />
-          <Route path="/categories/:id" Component={CategoryPage} />
-          <Route path="/ads/:id" Component={AdPage} />
-          <Route path="/ads/:id/edit" Component={AdEditorPage} />
-          <Route path="/ads/new" Component={AdEditorPage} />
-          <Route path="/about" Component={AboutPage} />
-          <Route path="*" Component={() => <Navigate to="/" />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <ApolloProvider client={client}>
+      <BrowserRouter>
+        <Routes>
+          <Route Component={PageLayout}>
+            <Route path="/" Component={HomePage} />
+            <Route path="/categories/:id" Component={CategoryPage} />
+            <Route path="/ads/:id" Component={AdPage} />
+            <Route path="/ads/:id/edit" Component={AdEditorPage} />
+            <Route path="/ads/new" Component={AdEditorPage} />
+            <Route path="/about" Component={AboutPage} />
+            <Route path="*" Component={() => <Navigate to="/" />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </ApolloProvider>
   );
 }
 
