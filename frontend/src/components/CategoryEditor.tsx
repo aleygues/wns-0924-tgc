@@ -1,23 +1,33 @@
-import axios from "axios";
 import { useState } from "react";
 import { CategoryType } from "../types";
+import { queryCategories } from "../api/categories";
+import { mutationCreateCategory } from "../api/createCategory";
+import { useMutation } from "@apollo/client";
 
 export function CategoryEditor(props: {
   onCategoryCreated: (newId: number) => void;
 }) {
   const [name, setName] = useState("");
 
+  const [doCreateCategory] = useMutation<{ createCategory: CategoryType }>(
+    mutationCreateCategory,
+    {
+      refetchQueries: [queryCategories],
+    }
+  );
   async function doSubmit() {
     try {
-      const result = await axios.post<CategoryType>(
-        "http://localhost:5000/categories",
-        {
-          name,
-        }
-      );
-      //
+      const { data } = await doCreateCategory({
+        variables: {
+          data: {
+            name,
+          },
+        },
+      });
       setName("");
-      props.onCategoryCreated(result.data.id);
+      if (data) {
+        props.onCategoryCreated(data.createCategory.id);
+      }
     } catch (err) {
       console.error(err);
     }

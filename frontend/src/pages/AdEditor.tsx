@@ -57,6 +57,11 @@ export function AdEditorPage() {
     queryCategories
   );
   const categories = categoriesData?.categories;
+  useEffect(() => {
+    if (categories && categories.length && !categoryId) {
+      setCategoryId(categories[0].id);
+    }
+  }, [categories]);
 
   const { data: tagsData } = useQuery<{ tags: TagType[] }>(queryTags);
   const tags = tagsData?.tags;
@@ -269,6 +274,7 @@ export function AdEditorPage() {
             onTagCreated={async (id) => {
               setShowTagEditor(false);
               /* await fetchTags(); */
+              /* await refetch(); */
               tagsIds.push(id);
               setTagsIds([...tagsIds]);
             }}

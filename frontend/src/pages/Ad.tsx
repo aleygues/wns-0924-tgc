@@ -1,8 +1,9 @@
-import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { AdType } from "../types";
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { queryAd } from "../api/ad";
+import { mutationDeleteAd } from "../api/deleteAd";
+import { queryAds } from "../api/ads";
 
 export function AdPage() {
   const navigate = useNavigate();
@@ -16,9 +17,16 @@ export function AdPage() {
   });
   const ad = data?.ad;
 
-  async function doDelete() {
+  const [doDelete] = useMutation(mutationDeleteAd, {
+    refetchQueries: [queryAds],
+  });
+  async function onDelete() {
     try {
-      await axios.delete<AdType>(`http://localhost:5000/ads/${id}`);
+      await doDelete({
+        variables: {
+          id,
+        },
+      });
       navigate("/", { replace: true });
     } catch (err) {
       console.error(err);
@@ -38,7 +46,7 @@ export function AdPage() {
       <h1>{ad.title}</h1>
       <p>{ad.description}</p>
       <p>{ad.category?.name}</p>
-      <button onClick={doDelete}>Supprimer l'offre</button>
+      <button onClick={onDelete}>Supprimer l'offre</button>
       <button onClick={onUpdate}>Modifier l'offre</button>
     </div>
   );

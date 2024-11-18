@@ -78,6 +78,7 @@ export class AdsResolver {
     const ad = await Ad.findOneBy({ id });
     if (ad !== null) {
       await ad.remove();
+      Object.assign(ad, { id });
       return ad;
     } else {
       return null;

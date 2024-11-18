@@ -1,17 +1,28 @@
-import axios from "axios";
 import { useState } from "react";
 import { TagType } from "../types";
+import { useMutation } from "@apollo/client";
+import { mutationCreateTag } from "../api/createTag";
+import { queryTags } from "../api/tags";
 
 export function TagEditor(props: { onTagCreated: (newId: number) => void }) {
   const [name, setName] = useState("");
 
+  const [doCreateTag] = useMutation<{ createTag: TagType }>(mutationCreateTag, {
+    refetchQueries: [queryTags],
+  });
   async function doSubmit() {
     try {
-      const result = await axios.post<TagType>("http://localhost:5000/tags", {
-        name,
+      const { data } = await doCreateTag({
+        variables: {
+          data: {
+            name,
+          },
+        },
       });
       setName("");
-      props.onTagCreated(result.data.id);
+      if (data) {
+        props.onTagCreated(data.createTag.id);
+      }
     } catch (err) {
       console.error(err);
     }
