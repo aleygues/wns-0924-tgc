@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import { AdType } from "../types";
 import styled from "styled-components";
+import { Ad as AdType } from "../gql/graphql";
 
 const Card = styled(Link)<{ $important?: boolean }>`
   border: 1px solid
@@ -52,7 +52,7 @@ const Tags = styled.div`
 `;
 
 export function Ad(
-  props: AdType & {
+  props: Partial<AdType> & {
     onAddToCart?: () => void;
     important?: boolean;
   }
@@ -62,9 +62,9 @@ export function Ad(
       <Image src={props.picture} />
       <div>
         <h4>{props.title}</h4>
-        <p>{(props.price / 100).toFixed(2)} €</p>
+        <p>{((props.price ?? 0) / 100).toFixed(2)} €</p>
         <Tags>
-          {props.tags.map((tag) => (
+          {props.tags?.map((tag) => (
             <span>{tag.name}</span>
           ))}
         </Tags>

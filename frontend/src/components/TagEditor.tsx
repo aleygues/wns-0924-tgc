@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { TagType } from "../types";
 import { useMutation } from "@apollo/client";
 import { mutationCreateTag } from "../api/createTag";
 import { queryTags } from "../api/tags";
@@ -7,7 +6,7 @@ import { queryTags } from "../api/tags";
 export function TagEditor(props: { onTagCreated: (newId: number) => void }) {
   const [name, setName] = useState("");
 
-  const [doCreateTag] = useMutation<{ createTag: TagType }>(mutationCreateTag, {
+  const [doCreateTag] = useMutation(mutationCreateTag, {
     refetchQueries: [queryTags],
   });
   async function doSubmit() {
@@ -21,7 +20,7 @@ export function TagEditor(props: { onTagCreated: (newId: number) => void }) {
       });
       setName("");
       if (data) {
-        props.onTagCreated(data.createTag.id);
+        props.onTagCreated(Number(data.createTag.id));
       }
     } catch (err) {
       console.error(err);

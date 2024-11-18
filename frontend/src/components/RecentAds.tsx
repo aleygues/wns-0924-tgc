@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { queryAds } from "../api/ads";
-import { AdType } from "../types";
 import { Ad } from "./Ad";
 import AdsContainer from "./AdsContainer";
 import { useQuery } from "@apollo/client";
 
 export function RecentAds() {
   const [showAds, setShowAds] = useState(false);
-  const { data, loading } = useQuery<{ ads: AdType[] }>(queryAds, {
+  const { data, loading } = useQuery(queryAds, {
     fetchPolicy: "cache-and-network",
   });
   const ads = data?.ads;
@@ -29,7 +28,7 @@ export function RecentAds() {
               description={ad.description}
               owner={ad.owner}
               location={ad.location}
-              tags={ad.tags}
+              tags={ad.tags as any}
               onAddToCart={() => {}}
             />
           ))}

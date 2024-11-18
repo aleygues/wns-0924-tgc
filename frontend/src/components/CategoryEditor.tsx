@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { CategoryType } from "../types";
 import { queryCategories } from "../api/categories";
 import { mutationCreateCategory } from "../api/createCategory";
 import { useMutation } from "@apollo/client";
@@ -9,12 +8,9 @@ export function CategoryEditor(props: {
 }) {
   const [name, setName] = useState("");
 
-  const [doCreateCategory] = useMutation<{ createCategory: CategoryType }>(
-    mutationCreateCategory,
-    {
-      refetchQueries: [queryCategories],
-    }
-  );
+  const [doCreateCategory] = useMutation(mutationCreateCategory, {
+    refetchQueries: [queryCategories],
+  });
   async function doSubmit() {
     try {
       const { data } = await doCreateCategory({
@@ -26,7 +22,7 @@ export function CategoryEditor(props: {
       });
       setName("");
       if (data) {
-        props.onCategoryCreated(data.createCategory.id);
+        props.onCategoryCreated(Number(data.createCategory.id));
       }
     } catch (err) {
       console.error(err);

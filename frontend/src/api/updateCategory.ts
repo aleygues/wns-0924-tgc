@@ -1,9 +1,9 @@
-import { gql } from "@apollo/client";
+import { gql } from "../gql";
 
-export const mutationUpdateCategory = gql`
+export const mutationUpdateCategory = gql(/* GraphQL */ `
   mutation updateCategory($data: CategoryUpdateInput!, $id: ID!) {
     updateCategory(data: $data, id: $id) {
       id
     }
   }
-`;
+`);

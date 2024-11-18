@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { AdType, CategoryType, TagType } from "../types";
 import { useNavigate, useParams } from "react-router-dom";
 import { CategoryEditor } from "../components/CategoryEditor";
 import { TagEditor } from "../components/TagEditor";
@@ -16,9 +15,9 @@ export function AdEditorPage() {
   const params = useParams<{ id: string }>();
   const id = params.id && Number(params.id);
 
-  const { data } = useQuery<{ ad: AdType }>(queryAd, {
+  const { data } = useQuery(queryAd, {
     variables: {
-      id,
+      id: id as string,
     },
     skip: !id,
   });
@@ -27,12 +26,12 @@ export function AdEditorPage() {
   const [error, setError] = useState<string>();
 
   const [title, setTitle] = useState("Super vélo 2");
-  const [description, setDescription] = useState("");
+  const [description, setDescription] = useState<string | null | undefined>("");
   const [price, setPrice] = useState(100);
   const [location, setLocation] = useState("Villeurbanne");
   const [picture, setPicture] = useState("https://google.com");
   const [owner, setOwner] = useState("aurelien@aleygues.fr");
-  const [categoryId, setCategoryId] = useState<number>();
+  const [categoryId, setCategoryId] = useState<number | null>();
   const [tagsIds, setTagsIds] = useState<number[]>([]);
 
   useEffect(() => {
@@ -43,40 +42,40 @@ export function AdEditorPage() {
       setLocation(ad.location);
       setPicture(ad.picture);
       setOwner(ad.owner);
-      setCategoryId(ad.category?.id);
+      setCategoryId(ad.category?.id ? Number(ad.category?.id) : null);
 
       const tagsIds: number[] = [];
       for (const tag of ad.tags) {
-        tagsIds.push(tag.id);
+        tagsIds.push(Number(tag.id));
       }
       setTagsIds(tagsIds);
     }
   }, [ad]);
 
-  const { data: categoriesData } = useQuery<{ categories: CategoryType[] }>(
-    queryCategories
-  );
+  const { data: categoriesData } = useQuery(queryCategories);
   const categories = categoriesData?.categories;
   useEffect(() => {
     if (categories && categories.length && !categoryId) {
-      setCategoryId(categories[0].id);
+      setCategoryId(Number(categories[0].id));
     }
   }, [categories]);
 
-  const { data: tagsData } = useQuery<{ tags: TagType[] }>(queryTags);
+  const { data: tagsData } = useQuery(queryTags);
   const tags = tagsData?.tags;
 
-  const [doCreateAd, { loading: createLoading }] = useMutation<{
-    createAd: AdType;
-  }>(mutationCreateAd, {
-    refetchQueries: [queryAds],
-  });
+  const [doCreateAd, { loading: createLoading }] = useMutation(
+    mutationCreateAd,
+    {
+      refetchQueries: [queryAds],
+    }
+  );
 
-  const [doUpdateAd, { loading: updateLoading }] = useMutation<{
-    updateAd: AdType;
-  }>(mutationUpdateAd, {
-    refetchQueries: [queryAds, queryAd],
-  });
+  const [doUpdateAd, { loading: updateLoading }] = useMutation(
+    mutationUpdateAd,
+    {
+      refetchQueries: [queryAds, queryAd],
+    }
+  );
 
   const loading = createLoading || updateLoading;
 
@@ -94,12 +93,12 @@ export function AdEditorPage() {
               location,
               picture,
               owner,
-              category: categoryId ? { id: categoryId } : null,
-              tags: tagsIds.map((id) => ({ id })),
+              category: categoryId ? { id: `${categoryId}` } : null,
+              tags: tagsIds.map((id) => ({ id: `${id}` })),
             },
           },
         });
-        navigate(`/ads/${data?.updateAd.id}`, { replace: true });
+        navigate(`/ads/${data?.updateAd?.id}`, { replace: true });
       } else {
         const { data } = await doCreateAd({
           variables: {
@@ -110,8 +109,8 @@ export function AdEditorPage() {
               location,
               picture,
               owner,
-              category: categoryId ? { id: categoryId } : null,
-              tags: tagsIds.map((id) => ({ id })),
+              category: { id: `${categoryId}` },
+              tags: tagsIds.map((id) => ({ id: `${id}` })),
             },
           },
         });
@@ -163,7 +162,7 @@ export function AdEditorPage() {
           Description :
           <input
             type="text"
-            value={description}
+            value={description ?? ""}
             onChange={(e) => setDescription(e.target.value)}
           />
         </label>
@@ -198,7 +197,7 @@ export function AdEditorPage() {
         <label>
           Catégorie :
           <select
-            value={categoryId}
+            value={categoryId ?? ""}
             onChange={(e) => setCategoryId(Number(e.target.value))}
           >
             {categories?.map((category) => (
@@ -232,20 +231,18 @@ export function AdEditorPage() {
             <label key={tag.id}>
               <input
                 type="checkbox"
-                checked={tagsIds.includes(tag.id) === true}
+                checked={tagsIds.includes(Number(tag.id)) === true}
                 onClick={() => {
-                  if (tagsIds.includes(tag.id) === true) {
+                  if (tagsIds.includes(Number(tag.id)) === true) {
                     const newArray = [];
                     for (const entry of tagsIds) {
-                      if (entry !== tag.id) {
+                      if (entry !== Number(tag.id)) {
                         newArray.push(entry);
                       }
                     }
-                    // const newArray = tagsIds.filter(t => tag.id !== t.id)
-
                     setTagsIds(newArray);
                   } else {
-                    tagsIds.push(tag.id);
+                    tagsIds.push(Number(tag.id));
 
                     const newArray = [];
                     for (const entry of tagsIds) {

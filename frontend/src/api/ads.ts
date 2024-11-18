@@ -1,6 +1,6 @@
-import { gql } from "@apollo/client";
+import { gql } from "../gql";
 
-export const queryAds = gql`
+export const queryAds = gql(/* GraphQL */ `
   query ads {
     ads {
       id
@@ -17,4 +17,4 @@ export const queryAds = gql`
       }
     }
   }
-`;
+`);

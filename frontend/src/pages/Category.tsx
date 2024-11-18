@@ -1,17 +1,16 @@
 import { useParams } from "react-router-dom";
 import { Ad } from "../components/Ad";
-import { CategoryType } from "../types";
 import AdsContainer from "../components/AdsContainer";
 import { useQuery } from "@apollo/client";
 import { queryCategory } from "../api/category";
 
 export function CategoryPage() {
   const params = useParams<{ id: string }>();
-  const id = Number(params.id);
+  const id = params.id;
 
-  const { data } = useQuery<{ category: CategoryType }>(queryCategory, {
+  const { data } = useQuery(queryCategory, {
     variables: {
-      id,
+      id: id as string,
     },
   });
   const category = data?.category;
@@ -38,7 +37,7 @@ export function CategoryPage() {
             description={ad.description}
             owner={ad.owner}
             location={ad.location}
-            tags={ad.tags}
+            tags={ad.tags as any}
             important
           />
         ))}

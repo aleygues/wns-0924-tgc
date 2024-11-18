@@ -1,12 +1,15 @@
-import { gql } from "@apollo/client";
+import { gql } from "../gql";
 
-export const queryAd = gql`
+export const queryAd = gql(/* GraphQL */ `
   query ad($id: ID!) {
     ad(id: $id) {
       id
       title
-      price
       description
+      price
+      location
+      picture
+      owner
       category {
         id
         name
@@ -17,4 +20,4 @@ export const queryAd = gql`
       }
     }
   }
-`;
+`);

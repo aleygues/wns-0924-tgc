@@ -1,5 +1,4 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { AdType } from "../types";
 import { useMutation, useQuery } from "@apollo/client";
 import { queryAd } from "../api/ad";
 import { mutationDeleteAd } from "../api/deleteAd";
@@ -8,11 +7,11 @@ import { queryAds } from "../api/ads";
 export function AdPage() {
   const navigate = useNavigate();
   const params = useParams<{ id: string }>();
-  const id = Number(params.id);
+  const id = params.id;
 
-  const { data } = useQuery<{ ad: AdType }>(queryAd, {
+  const { data } = useQuery(queryAd, {
     variables: {
-      id,
+      id: id as string,
     },
   });
   const ad = data?.ad;
@@ -24,7 +23,7 @@ export function AdPage() {
     try {
       await doDelete({
         variables: {
-          id,
+          id: id as string,
         },
       });
       navigate("/", { replace: true });
@@ -39,6 +38,10 @@ export function AdPage() {
 
   if (ad === undefined) {
     return <p>Chargement</p>;
+  }
+
+  if (ad === null) {
+    return <p>Annonce introuvable</p>;
   }
 
   return (
