@@ -7,15 +7,7 @@ import {
 } from "../entities/Ad";
 import { validate } from "class-validator";
 import { merge } from "../utils/merge";
-import {
-  And,
-  FindManyOptions,
-  FindOptionsWhere,
-  In,
-  LessThan,
-  Like,
-  MoreThan,
-} from "typeorm";
+import { And, In, LessThan, Like, MoreThan } from "typeorm";
 
 @Resolver()
 export class AdsResolver {
@@ -24,7 +16,7 @@ export class AdsResolver {
     @Arg("limit", () => Int, { nullable: true }) limit: number,
     @Arg("offset", () => Int, { nullable: true }) offset: number,
     @Arg("where", () => AdsWhereInput, { nullable: true }) where: AdsWhereInput
-   // @Arg("orderBy")
+    // @Arg("orderBy")
   ): Promise<Ad[]> {
     const filter: any = {};
 
@@ -53,8 +45,8 @@ export class AdsResolver {
       }
     }
 
-    if(where.title) {
-      filter.title = Like(`%${where.title}%`)
+    if (where.title) {
+      filter.title = Like(`%${where.title}%`);
     }
 
     const ads = await Ad.find({
@@ -65,9 +57,9 @@ export class AdsResolver {
       where: filter,
       take: limit,
       skip: offset,
-      order: {
+      /* order: {
         category.title
-      }
+      } */
     });
     return ads;
   }
