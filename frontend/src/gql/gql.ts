@@ -15,7 +15,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  */
 const documents = {
     "\n  query ad($id: ID!) {\n    ad(id: $id) {\n      id\n      title\n      description\n      price\n      location\n      picture\n      owner\n      category {\n        id\n        name\n      }\n      tags {\n        id\n        name\n      }\n    }\n  }\n": types.AdDocument,
-    "\n  query ads {\n    ads {\n      id\n      title\n      picture\n      title\n      price\n      description\n      owner\n      location\n      tags {\n        id\n        name\n      }\n    }\n  }\n": types.AdsDocument,
+    "\n  query ads($offset: Int, $limit: Int, $withCount: Boolean = false) {\n    ads(offset: $offset, limit: $limit) {\n      id\n      title\n      picture\n      title\n      price\n      description\n      owner\n      location\n      tags {\n        id\n        name\n      }\n    }\n    adsCount @include(if: $withCount)\n  }\n": types.AdsDocument,
     "\n  query categories {\n    categories {\n      id\n      name\n    }\n  }\n": types.CategoriesDocument,
     "\n  query category($id: ID!) {\n    category(id: $id) {\n      id\n      name\n      ads {\n        id\n        title\n        picture\n        title\n        price\n        description\n        owner\n        location\n        tags {\n          id\n          name\n        }\n      }\n    }\n  }\n": types.CategoryDocument,
     "\n  mutation createAd($data: AdCreateInput!) {\n    createAd(data: $data) {\n      id\n    }\n  }\n": types.CreateAdDocument,
@@ -49,7 +49,7 @@ export function gql(source: "\n  query ad($id: ID!) {\n    ad(id: $id) {\n      
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  query ads {\n    ads {\n      id\n      title\n      picture\n      title\n      price\n      description\n      owner\n      location\n      tags {\n        id\n        name\n      }\n    }\n  }\n"): (typeof documents)["\n  query ads {\n    ads {\n      id\n      title\n      picture\n      title\n      price\n      description\n      owner\n      location\n      tags {\n        id\n        name\n      }\n    }\n  }\n"];
+export function gql(source: "\n  query ads($offset: Int, $limit: Int, $withCount: Boolean = false) {\n    ads(offset: $offset, limit: $limit) {\n      id\n      title\n      picture\n      title\n      price\n      description\n      owner\n      location\n      tags {\n        id\n        name\n      }\n    }\n    adsCount @include(if: $withCount)\n  }\n"): (typeof documents)["\n  query ads($offset: Int, $limit: Int, $withCount: Boolean = false) {\n    ads(offset: $offset, limit: $limit) {\n      id\n      title\n      picture\n      title\n      price\n      description\n      owner\n      location\n      tags {\n        id\n        name\n      }\n    }\n    adsCount @include(if: $withCount)\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

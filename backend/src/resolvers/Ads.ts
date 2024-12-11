@@ -1,19 +1,81 @@
-import { Arg, ID, Mutation, Query, Resolver } from "type-graphql";
-import { Ad, AdCreateInput, AdUpdateInput } from "../entities/Ad";
+import { Arg, ID, Int, Mutation, Query, Resolver } from "type-graphql";
+import {
+  Ad,
+  AdCreateInput,
+  AdsWhereInput,
+  AdUpdateInput,
+} from "../entities/Ad";
 import { validate } from "class-validator";
 import { merge } from "../utils/merge";
+import {
+  And,
+  FindManyOptions,
+  FindOptionsWhere,
+  In,
+  LessThan,
+  Like,
+  MoreThan,
+} from "typeorm";
 
 @Resolver()
 export class AdsResolver {
   @Query(() => [Ad])
-  async ads(): Promise<Ad[]> {
+  async ads(
+    @Arg("limit", () => Int, { nullable: true }) limit: number,
+    @Arg("offset", () => Int, { nullable: true }) offset: number,
+    @Arg("where", () => AdsWhereInput, { nullable: true }) where: AdsWhereInput
+   // @Arg("orderBy")
+  ): Promise<Ad[]> {
+    const filter: any = {};
+
+    if (where.category) {
+      filter.category = {
+        id: where.category.id,
+      };
+    }
+
+    if (where.tags) {
+      filter.tags = {
+        id: In(where.tags.map((entry) => entry.id)),
+      };
+    }
+
+    if (where.price) {
+      if (where.price.max && where.price.min) {
+        filter.price = And(
+          MoreThan(where.price.min),
+          LessThan(where.price.max)
+        );
+      } else if (where.price.max) {
+        filter.price = LessThan(where.price.max);
+      } else if (where.price.min) {
+        filter.price = MoreThan(where.price.min);
+      }
+    }
+
+    if(where.title) {
+      filter.title = Like(`%${where.title}%`)
+    }
+
     const ads = await Ad.find({
       relations: {
         category: true,
         tags: true,
       },
+      where: filter,
+      take: limit,
+      skip: offset,
+      order: {
+        category.title
+      }
     });
     return ads;
+  }
+
+  @Query(() => Number)
+  async adsCount(): Promise<number> {
+    const adsCount = await Ad.count({});
+    return adsCount;
   }
 
   @Query(() => Ad, { nullable: true })

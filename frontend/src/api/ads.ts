@@ -1,8 +1,8 @@
 import { gql } from "../gql";
 
 export const queryAds = gql(/* GraphQL */ `
-  query ads {
-    ads {
+  query ads($offset: Int, $limit: Int, $withCount: Boolean = false) {
+    ads(offset: $offset, limit: $limit) {
       id
       title
       picture
@@ -16,5 +16,6 @@ export const queryAds = gql(/* GraphQL */ `
         name
       }
     }
+    adsCount @include(if: $withCount)
   }
 `);

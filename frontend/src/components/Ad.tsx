@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { Ad as AdType } from "../gql/graphql";
+import { AdsQuery, Ad as AdType } from "../gql/graphql";
+import { DeepPartial } from "@apollo/client/utilities";
 
 const Card = styled(Link)<{ $important?: boolean }>`
   border: 1px solid
@@ -52,7 +53,7 @@ const Tags = styled.div`
 `;
 
 export function Ad(
-  props: Partial<AdType> & {
+  props: DeepPartial<AdType> & {
     onAddToCart?: () => void;
     important?: boolean;
   }
@@ -65,7 +66,7 @@ export function Ad(
         <p>{((props.price ?? 0) / 100).toFixed(2)} €</p>
         <Tags>
           {props.tags?.map((tag) => (
-            <span>{tag.name}</span>
+            <span>{tag?.name}</span>
           ))}
         </Tags>
       </div>

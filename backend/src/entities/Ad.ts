@@ -14,6 +14,7 @@ import { Category } from "./Category";
 import { Tag } from "./Tag";
 import { Field, ID, InputType, Int, ObjectType } from "type-graphql";
 import { IdInput } from "./Id";
+import { NumberWhereInput } from "./NumberWhere";
 
 @Entity()
 @ObjectType()
@@ -80,6 +81,23 @@ export class Ad extends BaseEntity {
     // sendNotfication()
   }
 }
+
+@InputType()
+export class AdsWhereInput {
+  @Field(() => IdInput, { nullable: true })
+  category: IdInput;
+
+  @Field(() => [IdInput], { nullable: true })
+  tags: IdInput[];
+
+  @Field(() => NumberWhereInput, { nullable: true })
+  price: NumberWhereInput;
+
+  @Field({ nullable: true })
+  title: string;
+}
+
+// class AdsSortInput
 
 @InputType()
 export class AdCreateInput {
