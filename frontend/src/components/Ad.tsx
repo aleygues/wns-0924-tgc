@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { AdsQuery, Ad as AdType } from "../gql/graphql";
+import { Ad as AdType } from "../gql/graphql";
 import { DeepPartial } from "@apollo/client/utilities";
 
 const Card = styled(Link)<{ $important?: boolean }>`
