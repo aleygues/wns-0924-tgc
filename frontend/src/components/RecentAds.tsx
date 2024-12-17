@@ -14,7 +14,7 @@ export function RecentAds() {
 
   return (
     <>
-      <h2>Annonces récentes</h2>
+      <h2>Annonces très récentes</h2>
       <button onClick={() => setShowAds(!showAds)}>Show ads</button>
       {showAds && (
         <AdsContainer>

@@ -1,0 +1,11 @@
+services:
+  front:
+    build: ./frontend
+    # image: mongo
+    ports:
+      - 3000:5173
+    volumes:
+      - ./frontend/index.html:/app/index.html
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
+      - ./frontend/vite.config.ts:/app/vite.config.ts
