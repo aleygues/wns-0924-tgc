@@ -3,9 +3,19 @@ services:
     build: ./frontend
     # image: mongo
     ports:
-      - 3000:5173
+      - 5173:5173 # host_port:container_port
     volumes:
       - ./frontend/index.html:/app/index.html
       - ./frontend/src:/app/src
       - ./frontend/public:/app/public
       - ./frontend/vite.config.ts:/app/vite.config.ts
+  back:
+    build: ./backend
+    ports:
+      - 5000:5000 # host_port:container_port
+    # environment:
+    #   - CHOKIDAR_USEPOLLING=true
+    volumes:
+      - ./backend/src:/app/src # warning between window & linux, should use polling instead of file notification
+      - ./backend/database:/app/database
+    
