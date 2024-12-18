@@ -15,6 +15,8 @@ services:
       - 5000:5000 # host_port:container_port
     # environment:
     #   - CHOKIDAR_USEPOLLING=true
+    env_file:
+      - database.env
     volumes:
       - ./backend/src:/app/src # warning between window & linux, should use polling instead of file notification
       # - ./backend/database:/app/database # not needed anymore, was useful for SQLite
@@ -22,14 +24,18 @@ services:
     image: postgres
     ports:
       - 5432:5432 # host_port:container_port
-    environment:
-      POSTGRES_PASSWORD: supersecret
-      POSTGRES_USER: thegoodcorner
-      POSTGRES_DB: thegoodcorner
+    env_file:
+      - database.env
     volumes:
       # enough for local dev
       # - /var/lib/postgresql/data # creating anonymous volume
       - dbdata:/var/lib/postgresql/data
+
+# With docker, 4 ways to deal with data:
+# - no volume → data are stored in the container (not durable)
+# - ./somesfolderofmycomputer:./somefolderinthecontainer → mount the host filesystem in the container filesystem
+# - /somefolderinthecontainer → mount an anonymous volume managed by docker in the container filesystem
+# - namedvolume:/somefolderinthecontainer → mount a named volume created with Docker but manually managed in the container filesystem
 
 volumes:
   dbdata:
