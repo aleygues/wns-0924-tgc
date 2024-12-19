@@ -4,8 +4,8 @@ services:
     # image: mongo
     environment:
       GRAPHQL_SCHEMA_URL: http://back:5000
-    ports:
-      - 5173:5173 # host_port:container_port
+    # ports:
+    #   - 5173:5173 # host_port:container_port
     volumes:
       - ./frontend/index.html:/app/index.html
       - ./frontend/src:/app/src
@@ -13,8 +13,8 @@ services:
       - ./frontend/vite.config.ts:/app/vite.config.ts
   back:
     build: ./backend
-    ports:
-      - 5000:5000 # host_port:container_port
+    # ports:
+    #   - 5000:5000 # host_port:container_port
     # environment:
     #   - CHOKIDAR_USEPOLLING=true
     env_file:
@@ -32,6 +32,15 @@ services:
       # enough for local dev
       # - /var/lib/postgresql/data # creating anonymous volume
       - dbdata:/var/lib/postgresql/data
+  nginx:
+    image: nginx
+    volumes:
+      - ./nginx:/etc/nginx
+    ports:
+    - 8080:80
+    depends_on:
+    - back
+    - front
 
 # With docker, 4 ways to deal with data:
 # - no volume → data are stored in the container (not durable)
