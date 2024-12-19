@@ -20,7 +20,7 @@ export type Scalars = {
 
 export type Ad = {
   __typename?: 'Ad';
-  category?: Category;
+  category: Category;
   createdAt: Scalars['DateTimeISO']['output'];
   description?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
@@ -50,6 +50,13 @@ export type AdUpdateInput = {
   owner?: InputMaybe<Scalars['String']['input']>;
   picture?: InputMaybe<Scalars['String']['input']>;
   price?: InputMaybe<Scalars['Int']['input']>;
+  tags?: InputMaybe<Array<IdInput>>;
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type AdsWhereInput = {
+  category?: InputMaybe<IdInput>;
+  price?: InputMaybe<NumberWhereInput>;
   tags?: InputMaybe<Array<IdInput>>;
   title?: InputMaybe<Scalars['String']['input']>;
 };
@@ -147,6 +154,11 @@ export type MutationUpdateTagArgs = {
   id: Scalars['ID']['input'];
 };
 
+export type NumberWhereInput = {
+  max?: InputMaybe<Scalars['Float']['input']>;
+  min?: InputMaybe<Scalars['Float']['input']>;
+};
+
 export type Query = {
   __typename?: 'Query';
   ad?: Maybe<Ad>;
@@ -167,6 +179,7 @@ export type QueryAdArgs = {
 export type QueryAdsArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<AdsWhereInput>;
 };
 
 
