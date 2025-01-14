@@ -14,9 +14,10 @@ services:
     ports:
       - 5000:5000 # host_port:container_port
     # environment:
-    #   - CHOKIDAR_USEPOLLING=true
+      # - CHOKIDAR_USEPOLLING=true
     env_file:
       - database.env
+      - backend.env
     volumes:
       - ./backend/src:/app/src # warning between window & linux, should use polling instead of file notification
       # - ./backend/database:/app/database # not needed anymore, was useful for SQLite
