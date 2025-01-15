@@ -2,8 +2,9 @@ import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import { validate } from "class-validator";
 import { User, UserCreateInput } from "../entities/User";
 import { hash, verify } from "argon2";
-import { sign, verify as jwtVerify, decode } from "jsonwebtoken";
+import { sign, verify as jwtVerify } from "jsonwebtoken";
 import Cookies from "cookies";
+import { ContextType, getUserFromContext } from "../auth";
 
 @Resolver()
 export class UsersResolver {
@@ -37,7 +38,7 @@ export class UsersResolver {
   async signin(
     @Arg("email") email: string,
     @Arg("password") password: string,
-    @Ctx() context: { req: any; res: any }
+    @Ctx() context: ContextType
   ): Promise<User> {
     // search user by email
     // compare passwords using argon2
@@ -84,15 +85,16 @@ export class UsersResolver {
     }
   }
 
-  @Authorized()
-  @Query(() => User, { nullable: true })
-  async whoami(@Ctx() context: { req: any; res: any; user: User }) {
+  @Mutation(() => Boolean)
+  async signout(@Ctx() context: ContextType): Promise<boolean> {
     const cookies = new Cookies(context.req, context.res);
-    const token = cookies.get("token");
-    const payload = decode(token) as unknown as { id: number };
-    const user = await User.findOneBy({
-      id: payload.id,
-    });
-    return user;
+    cookies.set("token", "", { maxAge: 0 });
+    return true;
+  }
+
+  // @Authorized()
+  @Query(() => User, { nullable: true })
+  async whoami(@Ctx() context: ContextType): Promise<User | null> {
+    return await getUserFromContext(context);
   }
 }
