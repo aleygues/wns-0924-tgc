@@ -27,6 +27,9 @@ export class UsersResolver {
         password: undefined,
       });
       await newUser.save();
+
+      // send email for validation
+
       return newUser;
     } catch (e) {
       console.error(e);
@@ -81,7 +84,7 @@ export class UsersResolver {
       }
     } catch (e) {
       console.error(e);
-      throw new Error("unable to sign in");
+      return null;
     }
   }
 

@@ -38,9 +38,15 @@ export function Navbar() {
             </svg>
           </button>
         </form>
-        <Link to="/ads/new" className="button link-button">
+        {/* <Link to="/ads/new" className="button link-button">
           <span className="mobile-short-label">Publier</span>
           <span className="desktop-long-label">Publier une annonce</span>
+        </Link> */}
+        <Link to="/signin" className="button link-button">
+          Connexion
+        </Link>
+        <Link to="/signup" className="button link-button">
+          Inscription
         </Link>
       </div>
       <nav className="categories-navigation">
