@@ -53,6 +53,9 @@ export class CategoriesResolver {
     const newCategory = new Category();
     Object.assign(newCategory, data);
 
+    // shoud add some logic here
+    // to attach createdBy prop
+
     const errors = await validate(newCategory);
     if (errors.length > 0) {
       throw new Error(`Validation error: ${JSON.stringify(errors)}`);

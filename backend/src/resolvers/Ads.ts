@@ -1,10 +1,11 @@
-import { Arg, ID, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Authorized, ID, Mutation, Query, Resolver } from "type-graphql";
 import { Ad, AdCreateInput, AdUpdateInput } from "../entities/Ad";
 import { validate } from "class-validator";
 import { merge } from "../utils/merge";
 
 @Resolver()
 export class AdsResolver {
+  @Authorized()
   @Query(() => [Ad])
   async ads(): Promise<Ad[]> {
     const ads = await Ad.find({

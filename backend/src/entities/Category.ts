@@ -1,13 +1,16 @@
 import {
   BaseEntity,
   Column,
+  CreateDateColumn,
   Entity,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Ad } from "./Ad";
 import { Field, ID, InputType, ObjectType } from "type-graphql";
 import { Length } from "class-validator";
+import { User } from "./User";
 
 // like { createdAt user }
 @ObjectType()
@@ -45,6 +48,14 @@ export class Category extends BaseEntity {
       },
     ];
   }
+
+  @CreateDateColumn()
+  @Field()
+  createdAt: Date;
+
+  @ManyToOne(() => User)
+  @Field(() => User)
+  createdBy: User;
 }
 
 @InputType()
