@@ -2,13 +2,16 @@ import { useState } from "react";
 import { mutationSignin } from "../api/signin";
 import { useMutation } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
+import { queryWhoami } from "../api/whoiam";
 
 export function SigninPage() {
   const [email, setEmail] = useState("test1@gmail.com");
   const [password, setPassword] = useState("SuperSecret#2025");
   const [error, setError] = useState("");
 
-  const [doSignin, { loading }] = useMutation(mutationSignin);
+  const [doSignin, { loading }] = useMutation(mutationSignin, {
+    refetchQueries: [queryWhoami],
+  });
 
   const navigate = useNavigate();
 

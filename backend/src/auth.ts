@@ -42,9 +42,12 @@ export const authChecker: AuthChecker<ContextType> = async (
   { root, args, context, info },
   roles
 ) => {
+  // @Authorized(["admin", "user"]) → roles = ["admin", "user"]
+  // @Authorized() → roles = []
+
   const user = await getUserFromContext(context);
   context.user = user;
-  if (user) {
+  if (user /** && has user the good role? */) {
     return true;
   } else {
     return false;

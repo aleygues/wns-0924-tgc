@@ -1,14 +1,27 @@
 import { Link } from "react-router-dom";
 import { Category } from "./Category";
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { CategoryType } from "../types";
 import { queryCategories } from "../api/categories";
+import { queryWhoami } from "../api/whoiam";
+import { mutationSignout } from "../api/signout";
 
 export function Navbar() {
-  const { data, loading } = useQuery<{ categories: CategoryType[] }>(
-    queryCategories
-  );
-  const categories = data?.categories;
+  const { data: categoriesData, loading } = useQuery<{
+    categories: CategoryType[];
+  }>(queryCategories);
+  const categories = categoriesData?.categories;
+
+  const { data: whoamiData } = useQuery(queryWhoami);
+  const me = whoamiData?.whoami;
+
+  const [doSignout] = useMutation(mutationSignout, {
+    refetchQueries: [queryWhoami],
+  });
+  async function onSignout() {
+    doSignout();
+  }
+  console.log("me =>", me);
 
   return (
     <header className="header">
@@ -42,12 +55,25 @@ export function Navbar() {
           <span className="mobile-short-label">Publier</span>
           <span className="desktop-long-label">Publier une annonce</span>
         </Link> */}
-        <Link to="/signin" className="button link-button">
-          Connexion
-        </Link>
-        <Link to="/signup" className="button link-button">
-          Inscription
-        </Link>
+        {me ? (
+          <>
+            <Link to="/ads/news" className="button link-button">
+              + Annonce
+            </Link>
+            <button onClick={onSignout} className="button link-button">
+              Déconnexion
+            </button>
+          </>
+        ) : me === null ? (
+          <>
+            <Link to="/signin" className="button link-button">
+              Connexion
+            </Link>
+            <Link to="/signup" className="button link-button">
+              Inscription
+            </Link>
+          </>
+        ) : null}
       </div>
       <nav className="categories-navigation">
         {loading === true && <p>Chargement</p>}

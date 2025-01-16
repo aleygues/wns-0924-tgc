@@ -11,8 +11,9 @@ import { SigninPage } from "./pages/Signin";
 import { SignupPage } from "./pages/Signup";
 
 const client = new ApolloClient({
-  uri: "http://localhost:5000",
+  uri: "/api",
   cache: new InMemoryCache(),
+  credentials: "same-origin",
 });
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
         <Routes>
           <Route Component={PageLayout}>
             <Route path="/" Component={HomePage} />
+            {/* Should be only accessible by unconnected users */}
             <Route path="/signin" Component={SigninPage} />
             <Route path="/signup" Component={SignupPage} />
             <Route path="/categories/:id" Component={CategoryPage} />
