@@ -84,7 +84,6 @@ export class AdsResolver {
       if (errors.length > 0) {
         throw new Error(`Validation error: ${JSON.stringify(errors)}`);
       } else {
-        console.log(ad);
         await ad.save();
         return ad;
       }

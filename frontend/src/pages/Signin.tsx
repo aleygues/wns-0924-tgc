@@ -25,7 +25,6 @@ export function SigninPage() {
       });
       if (data.signin) {
         // connected
-        console.log(data.signin);
         navigate(`/`, { replace: true });
       } else {
         setError("Impossible de vous connecter");

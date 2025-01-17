@@ -40,7 +40,7 @@ export class TagsResolver {
     }
   }
 
-  @Authorized()
+  @Authorized("admin")
   @Mutation(() => Tag)
   async createTag(
     @Arg("data", () => TagCreateInput) data: TagCreateInput,
@@ -58,7 +58,7 @@ export class TagsResolver {
     }
   }
 
-  @Authorized()
+  @Authorized("admin")
   @Mutation(() => Tag, { nullable: true })
   async updateTag(
     @Arg("id", () => ID) id: number,
@@ -81,7 +81,7 @@ export class TagsResolver {
     }
   }
 
-  @Authorized()
+  @Authorized("admin")
   @Mutation(() => Tag, { nullable: true })
   async deleteTag(
     @Arg("id", () => ID) id: number,

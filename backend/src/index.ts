@@ -7,7 +7,7 @@ import { CategoriesResolver } from "./resolvers/Categories";
 import { AdsResolver } from "./resolvers/Ads";
 import { TagsResolver } from "./resolvers/Tags";
 import { UsersResolver } from "./resolvers/Users";
-import { AddUserToContext, authChecker } from "./auth";
+import { authChecker, ContextType, getUserFromContext } from "./auth";
 
 async function initialize() {
   await datasource.initialize();
@@ -16,7 +16,6 @@ async function initialize() {
   const schema = await buildSchema({
     resolvers: [UsersResolver, CategoriesResolver, AdsResolver, TagsResolver],
     authChecker,
-    globalMiddlewares: [AddUserToContext],
   });
 
   const server = new ApolloServer({ schema });
@@ -24,13 +23,14 @@ async function initialize() {
   const { url } = await startStandaloneServer(server, {
     listen: { port: 5000 },
     context: async ({ req, res }) => {
-      // get token cookies?
-      // you should use the cookies Cookies.get
-      // Look at authchecker
-      return {
+      const context: ContextType = {
         req,
         res,
+        user: undefined,
       };
+      const user = await getUserFromContext(context);
+      context.user = user; // will be a user or null
+      return context;
     },
   });
   console.log(`GraphQL server ready at ${url}`);

@@ -21,7 +21,6 @@ export function Navbar() {
   async function onSignout() {
     doSignout();
   }
-  console.log("me =>", me);
 
   return (
     <header className="header">

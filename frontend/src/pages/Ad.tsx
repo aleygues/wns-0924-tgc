@@ -4,11 +4,15 @@ import { useMutation, useQuery } from "@apollo/client";
 import { queryAd } from "../api/ad";
 import { mutationDeleteAd } from "../api/deleteAd";
 import { queryAds } from "../api/ads";
+import { queryWhoami } from "../api/whoiam";
 
 export function AdPage() {
   const navigate = useNavigate();
   const params = useParams<{ id: string }>();
   const id = Number(params.id);
+
+  const { data: whoamiData } = useQuery(queryWhoami);
+  const me = whoamiData?.whoami;
 
   const { data } = useQuery<{ ad: AdType }>(queryAd, {
     variables: {
@@ -48,8 +52,12 @@ export function AdPage() {
       <p>{ad.category?.name}</p>
       <p>Créée par {ad.createdBy?.email ?? "(information cachée)"}</p>
       {/* Should be displayed only for admins and author */}
-      <button onClick={onDelete}>Supprimer l'offre</button>
-      <button onClick={onUpdate}>Modifier l'offre</button>
+      {(me?.role === "admin" || me?.id === ad.createdBy.id) && (
+        <>
+          <button onClick={onDelete}>Supprimer l'offre</button>
+          <button onClick={onUpdate}>Modifier l'offre</button>
+        </>
+      )}
     </div>
   );
 }

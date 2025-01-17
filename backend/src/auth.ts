@@ -38,19 +38,11 @@ export async function getUserFromContext(
   }
 }
 
-export const AddUserToContext: MiddlewareFn<ContextType> = async (
-  { context },
-  next
-) => {
-  const user = await getUserFromContext(context);
-  context.user = user; // will be a user or null
-  await next();
-};
-
 export const authChecker: AuthChecker<ContextType> = async (
   { root, args, context, info },
   roles
 ) => {
+  console.log("Auth Checker");
   // @Authorized(["admin", "user"]) → roles = ["admin", "user"]
   // @Authorized() → roles = []
   // if the roles are omitted, should be consider as an admin autorization → least privileges security concern
