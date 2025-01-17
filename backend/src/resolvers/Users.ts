@@ -1,10 +1,10 @@
-import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import { validate } from "class-validator";
 import { User, UserCreateInput } from "../entities/User";
 import { hash, verify } from "argon2";
-import { sign, verify as jwtVerify } from "jsonwebtoken";
+import { sign } from "jsonwebtoken";
 import Cookies from "cookies";
-import { ContextType, getUserFromContext } from "../auth";
+import { ContextType } from "../auth";
 
 @Resolver()
 export class UsersResolver {
@@ -60,13 +60,6 @@ export class UsersResolver {
             process.env.JWT_SECRET_KEY
           );
 
-          /* try {
-            const payload = jwtVerify(token, process.env.JWT_SECRET_KEY);
-            console.log("OK", payload);
-          } catch {
-            console.log("KO");
-          } */
-
           const cookies = new Cookies(context.req, context.res);
 
           cookies.set("token", token, {
@@ -97,6 +90,7 @@ export class UsersResolver {
 
   @Query(() => User, { nullable: true })
   async whoami(@Ctx() context: ContextType): Promise<User | null> {
-    return await getUserFromContext(context);
+    // user has already been added to context by the global middleware (see index.ts)
+    return context.user;
   }
 }

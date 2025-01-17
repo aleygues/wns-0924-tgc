@@ -1,6 +1,6 @@
 import Cookies from "cookies";
 import { verify } from "jsonwebtoken";
-import { AuthChecker } from "type-graphql";
+import { AuthChecker, MiddlewareFn } from "type-graphql";
 import { User } from "./entities/User";
 
 export type ContextType = { req: any; res: any; user: User | null | undefined };
@@ -38,19 +38,28 @@ export async function getUserFromContext(
   }
 }
 
+export const AddUserToContext: MiddlewareFn<ContextType> = async (
+  { context },
+  next
+) => {
+  const user = await getUserFromContext(context);
+  context.user = user; // will be a user or null
+  await next();
+};
+
 export const authChecker: AuthChecker<ContextType> = async (
   { root, args, context, info },
   roles
 ) => {
   // @Authorized(["admin", "user"]) → roles = ["admin", "user"]
   // @Authorized() → roles = []
-
+  // if the roles are omitted, should be consider as an admin autorization → least privileges security concern
   if (roles.length === 0) {
     roles = ["admin"];
   }
 
-  const user = await getUserFromContext(context);
-  context.user = user;
+  // user has already been put in context (if found) by the global middleware (see index.ts)
+  const user = context.user;
   if (user && roles.includes(user.role)) {
     return true;
   } else {
