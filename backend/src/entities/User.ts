@@ -16,14 +16,17 @@ import {
 } from "typeorm";
 import { AuthContextType } from "../auth";
 
+// this middleware ensure that only admin and self user may see some personnal info
+// note: root is the currently resolving user
 export const IsUser: MiddlewareFn<AuthContextType> = async (
-  { info, context, root },
+  { context, root },
   next
 ) => {
-  console.log(root, context.user);
-  // root.id === context.user.id → accept to read email
-  // cannot read email
-  await next();
+  if (context.user.role === "admin" || context.user.id === root.id) {
+    return await next();
+  } else {
+    return null;
+  }
 };
 
 @Entity()
@@ -34,7 +37,7 @@ export class User extends BaseEntity {
   id: number;
 
   @Column({ unique: true })
-  @Field()
+  @Field({ nullable: true }) // this should be nullable because only admins + self user may see this, null otherwise
   @UseMiddleware(IsUser)
   email: string;
 

@@ -46,7 +46,7 @@ export function AdPage() {
       <h1>{ad.title}</h1>
       <p>{ad.description}</p>
       <p>{ad.category?.name}</p>
-      <p>Créée par {ad.createdBy?.email}</p>
+      <p>Créée par {ad.createdBy?.email ?? "(information cachée)"}</p>
       {/* Should be displayed only for admins and author */}
       <button onClick={onDelete}>Supprimer l'offre</button>
       <button onClick={onUpdate}>Modifier l'offre</button>
