@@ -31,7 +31,6 @@ export function AdEditorPage() {
   const [price, setPrice] = useState(100);
   const [location, setLocation] = useState("Villeurbanne");
   const [picture, setPicture] = useState("https://google.com");
-  const [owner, setOwner] = useState("aurelien@aleygues.fr");
   const [categoryId, setCategoryId] = useState<number>();
   const [tagsIds, setTagsIds] = useState<number[]>([]);
 
@@ -42,7 +41,6 @@ export function AdEditorPage() {
       setPrice(ad.price);
       setLocation(ad.location);
       setPicture(ad.picture);
-      setOwner(ad.owner);
       setCategoryId(ad.category?.id);
 
       const tagsIds: number[] = [];
@@ -93,7 +91,6 @@ export function AdEditorPage() {
               price,
               location,
               picture,
-              owner,
               category: categoryId ? { id: categoryId } : null,
               tags: tagsIds.map((id) => ({ id })),
             },
@@ -109,7 +106,6 @@ export function AdEditorPage() {
               price,
               location,
               picture,
-              owner,
               category: categoryId ? { id: categoryId } : null,
               tags: tagsIds.map((id) => ({ id })),
             },
@@ -183,15 +179,6 @@ export function AdEditorPage() {
             type="text"
             value={picture}
             onChange={(e) => setPicture(e.target.value)}
-          />
-        </label>
-        <br />
-        <label>
-          Auteur :
-          <input
-            type="text"
-            value={owner}
-            onChange={(e) => setOwner(e.target.value)}
           />
         </label>
         <br />

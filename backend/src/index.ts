@@ -1,7 +1,6 @@
 import "reflect-metadata";
 import { datasource } from "./datasource";
 import { buildSchema } from "type-graphql";
-import { PicturesResolver } from "./resolvers/Pictures";
 import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
 import { CategoriesResolver } from "./resolvers/Categories";

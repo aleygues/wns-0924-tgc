@@ -95,7 +95,6 @@ export class UsersResolver {
     return true;
   }
 
-  // @Authorized()
   @Query(() => User, { nullable: true })
   async whoami(@Ctx() context: ContextType): Promise<User | null> {
     return await getUserFromContext(context);

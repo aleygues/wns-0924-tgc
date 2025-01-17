@@ -57,7 +57,12 @@ export function Navbar() {
         </Link> */}
         {me ? (
           <>
-            <Link to="/ads/news" className="button link-button">
+            {me.role === "admin" && (
+              <Link to="/admin" className="button link-button">
+                Admin
+              </Link>
+            )}
+            <Link to="/ads/new" className="button link-button">
               + Annonce
             </Link>
             <button onClick={onSignout} className="button link-button">

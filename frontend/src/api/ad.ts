@@ -15,6 +15,11 @@ export const queryAd = gql`
         id
         name
       }
+      createdAt
+      createdBy {
+        id
+        email
+      }
     }
   }
 `;

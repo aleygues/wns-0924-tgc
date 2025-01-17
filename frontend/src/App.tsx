@@ -6,15 +6,54 @@ import { PageLayout } from "./components/Layout";
 import { AdPage } from "./pages/Ad";
 import { AdEditorPage } from "./pages/AdEditor";
 import { CategoryPage } from "./pages/Category";
-import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
+import {
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  useQuery,
+} from "@apollo/client";
 import { SigninPage } from "./pages/Signin";
 import { SignupPage } from "./pages/Signup";
+import { queryWhoami } from "./api/whoiam";
+import { AdminPage } from "./pages/Admin";
 
 const client = new ApolloClient({
   uri: "/api",
   cache: new InMemoryCache(),
   credentials: "same-origin",
 });
+
+enum AuthState {
+  user = "user",
+  admin = "admin",
+  unauthenticated = "unauthenticated",
+}
+
+// higher order function
+function checkAuth(
+  Component: React.FC,
+  authStates: AuthState[],
+  redirectTo: string = "/"
+) {
+  // Component Function
+  return function () {
+    const { data: whoamiData } = useQuery(queryWhoami);
+    const me = whoamiData?.whoami;
+
+    if (me === undefined) {
+      return null;
+    }
+
+    if (
+      (me === null && authStates.includes(AuthState.unauthenticated)) ||
+      (me && authStates.includes(me.role))
+    ) {
+      return <Component />;
+    }
+
+    return <Navigate to={redirectTo} replace />;
+  };
+}
 
 function App() {
   return (
@@ -23,13 +62,42 @@ function App() {
         <Routes>
           <Route Component={PageLayout}>
             <Route path="/" Component={HomePage} />
-            {/* Should be only accessible by unconnected users */}
-            <Route path="/signin" Component={SigninPage} />
-            <Route path="/signup" Component={SignupPage} />
+
+            {/* Guest pages */}
+            <Route
+              path="/signin"
+              Component={checkAuth(SigninPage, [AuthState.unauthenticated])}
+            />
+            <Route
+              path="/signup"
+              Component={checkAuth(SignupPage, [AuthState.unauthenticated])}
+            />
+
+            {/* Admin pages */}
+            <Route
+              path="/admin"
+              Component={checkAuth(AdminPage, [AuthState.admin])}
+            />
+
+            {/* User & admin pages */}
+            <Route
+              path="/ads/:id/edit"
+              Component={checkAuth(AdEditorPage, [
+                AuthState.user,
+                AuthState.admin,
+              ])}
+            />
+            <Route
+              path="/ads/new"
+              Component={checkAuth(AdEditorPage, [
+                AuthState.user,
+                AuthState.admin,
+              ])}
+            />
+
+            {/* Public pages */}
             <Route path="/categories/:id" Component={CategoryPage} />
             <Route path="/ads/:id" Component={AdPage} />
-            <Route path="/ads/:id/edit" Component={AdEditorPage} />
-            <Route path="/ads/new" Component={AdEditorPage} />
             <Route path="/about" Component={AboutPage} />
             <Route path="*" Component={() => <Navigate to="/" />} />
           </Route>

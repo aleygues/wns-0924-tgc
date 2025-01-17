@@ -9,14 +9,20 @@ export type AdType = {
   price: number;
   picture: string;
   description: string;
-  owner: string;
   location: string;
   category?: CategoryType;
   tags: TagType[];
+  createdAt: string;
+  createdBy: UserType;
 };
 
 export type CategoryType = {
   id: number;
   name: string;
   ads?: AdType[];
+};
+
+export type UserType = {
+  id: number;
+  email: string;
 };

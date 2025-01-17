@@ -4,6 +4,7 @@ import {
   BaseEntity,
   BeforeInsert,
   Column,
+  CreateDateColumn,
   Entity,
   JoinTable,
   ManyToMany,
@@ -14,6 +15,7 @@ import { Category } from "./Category";
 import { Tag } from "./Tag";
 import { Field, ID, InputType, Int, ObjectType } from "type-graphql";
 import { IdInput } from "./Id";
+import { User } from "./User";
 
 @Entity()
 @ObjectType()
@@ -51,11 +53,6 @@ export class Ad extends BaseEntity {
   location!: string;
 
   @Column()
-  @IsEmail()
-  @Field()
-  owner!: string;
-
-  @Column()
   @Min(0, { message: "Price must be positive" })
   @Max(1000000, { message: "Price must be lower than 1000000 cents" })
   @Field(() => Int)
@@ -66,10 +63,6 @@ export class Ad extends BaseEntity {
   @Field()
   picture!: string;
 
-  @Column()
-  @Field()
-  createdAt!: Date;
-
   @BeforeInsert()
   private setCreatedAt() {
     this.createdAt = new Date();
@@ -79,6 +72,14 @@ export class Ad extends BaseEntity {
   private sendNotification() {
     // sendNotfication()
   }
+
+  @CreateDateColumn()
+  @Field()
+  createdAt: Date;
+
+  @ManyToOne(() => User)
+  @Field(() => User)
+  createdBy: User;
 }
 
 @InputType()
@@ -98,10 +99,6 @@ export class AdCreateInput {
 
   @Field()
   location!: string;
-
-  @IsEmail()
-  @Field()
-  owner!: string;
 
   @Min(0, { message: "Price must be positive" })
   @Max(1000000, { message: "Price must be lower than 1000000 cents" })
@@ -129,9 +126,6 @@ export class AdUpdateInput {
 
   @Field({ nullable: true })
   location!: string;
-
-  @Field({ nullable: true })
-  owner!: string;
 
   @Field(() => Int, { nullable: true })
   price!: number;

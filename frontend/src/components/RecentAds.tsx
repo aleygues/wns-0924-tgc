@@ -27,9 +27,10 @@ export function RecentAds() {
               title={ad.title}
               price={ad.price}
               description={ad.description}
-              owner={ad.owner}
               location={ad.location}
               tags={ad.tags}
+              createdBy={ad.createdBy}
+              createdAt={ad.createdAt}
               onAddToCart={() => {}}
             />
           ))}

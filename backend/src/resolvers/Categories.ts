@@ -40,15 +40,13 @@ export class CategoriesResolver {
   }
 
   @Query(() => Category, { nullable: true })
-  async category(@Arg("id", () => ID) id: number): Promise<Category | null> {
+  async category(
+    @Arg("id", () => ID) id: number,
+    @Info() info: GraphQLResolveInfo
+  ): Promise<Category | null> {
     const category = await Category.findOne({
       where: { id },
-      relations: {
-        ads: {
-          tags: true,
-        },
-        createdBy: true,
-      },
+      relations: makeRelations(info, Category),
     });
     if (category) {
       return category;
@@ -57,7 +55,7 @@ export class CategoriesResolver {
     }
   }
 
-  @Authorized()
+  @Authorized("admin")
   @Mutation(() => Category)
   async createCategory(
     @Arg("data", () => CategoryCreateInput) data: CategoryCreateInput,
@@ -76,7 +74,7 @@ export class CategoriesResolver {
     }
   }
 
-  @Authorized()
+  @Authorized("admin")
   @Mutation(() => Category, { nullable: true })
   async updateCategory(
     @Arg("id", () => ID) id: number,
@@ -102,7 +100,7 @@ export class CategoriesResolver {
     }
   }
 
-  @Authorized()
+  @Authorized("admin")
   @Mutation(() => Category, { nullable: true })
   async deleteCategory(
     @Arg("id", () => ID) id: number,
