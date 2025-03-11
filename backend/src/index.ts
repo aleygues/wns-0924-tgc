@@ -8,15 +8,13 @@ import { AdsResolver } from "./resolvers/Ads";
 import { TagsResolver } from "./resolvers/Tags";
 import { UsersResolver } from "./resolvers/Users";
 import { authChecker, ContextType, getUserFromContext } from "./auth";
+import { getSchema } from "./schema";
 
 async function initialize() {
   await datasource.initialize();
   console.log("Datasource is connected");
 
-  const schema = await buildSchema({
-    resolvers: [UsersResolver, CategoriesResolver, AdsResolver, TagsResolver],
-    authChecker,
-  });
+  const schema = await getSchema();
 
   const server = new ApolloServer({ schema });
 

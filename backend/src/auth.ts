@@ -42,7 +42,6 @@ export const authChecker: AuthChecker<ContextType> = async (
   { root, args, context, info },
   roles
 ) => {
-  console.log("Auth Checker");
   // @Authorized(["admin", "user"]) → roles = ["admin", "user"]
   // @Authorized() → roles = []
   // if the roles are omitted, should be consider as an admin autorization → least privileges security concern

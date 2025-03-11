@@ -4,14 +4,20 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:postgres": "docker rm --force pgtest ; docker run -d -p 5434:5432 --name pgtest -e POSTGRES_PASSWORD=secret postgres && POSTGRES_PORT=5434 POSTGRES_HOST=localhost POSTGRES_PASSWORD=secret POSTGRES_USER=postgres npx jest --watch",
     "start": "tsnd ./src/index.ts"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@jest/globals": "^29.7.0",
     "@types/cookies": "^0.9.0",
+    "@types/jest": "^29.5.14",
     "@types/jsonwebtoken": "^9.0.7",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.6",
     "ts-node-dev": "^2.0.0"
   },
   "dependencies": {

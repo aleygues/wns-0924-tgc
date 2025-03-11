@@ -119,7 +119,7 @@ export class CategoriesResolver {
     }
   }
 
-  @Authorized()
+  @Authorized("admin")
   @Mutation(() => [Category])
   async deleteCategories(
     @Arg("ids", () => [ID]) ids: number[],
