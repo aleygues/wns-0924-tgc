@@ -1,4 +1,4 @@
-import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import { validate } from "class-validator";
 import { User, UserCreateInput } from "../entities/User";
 import { hash, verify } from "argon2";
@@ -60,13 +60,15 @@ export class UsersResolver {
             process.env.JWT_SECRET_KEY
           );
 
-          const cookies = new Cookies(context.req, context.res);
+          if (process.env.NODE_ENV !== "testing") {
+            const cookies = new Cookies(context.req, context.res);
 
-          cookies.set("token", token, {
-            secure: false,
-            httpOnly: true,
-            maxAge: 1000 * 60 * 60 * 72,
-          });
+            cookies.set("token", token, {
+              secure: false,
+              httpOnly: true,
+              maxAge: 1000 * 60 * 60 * 72,
+            });
+          }
 
           return user;
         } else {

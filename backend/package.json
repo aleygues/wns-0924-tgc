@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:postgres": "docker rm --force pgtest ; docker run -d -p 5434:5432 --name pgtest -e POSTGRES_PASSWORD=secret postgres && POSTGRES_PORT=5434 POSTGRES_HOST=localhost POSTGRES_PASSWORD=secret POSTGRES_USER=postgres npx jest --watch",
+    "test:postgres": "docker rm --force pgtest ; docker run -d -p 5434:5432 --name pgtest -e POSTGRES_PASSWORD=secret postgres && POSTGRES_PORT=5434 POSTGRES_HOST=localhost POSTGRES_PASSWORD=secret POSTGRES_USER=postgres JWT_SECRET_KEY=supersecret NODE_ENV=testing npx jest --watch",
     "start": "tsnd ./src/index.ts"
   },
   "author": "",

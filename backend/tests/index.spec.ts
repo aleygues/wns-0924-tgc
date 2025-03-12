@@ -1,19 +1,25 @@
 import { ApolloServer, BaseContext } from "@apollo/server";
 import { getSchema } from "../src/schema";
-import { mutationCreateUser } from "./api/createUser";
 import { datasource } from "../src/datasource";
-import { User } from "../src/entities/User";
 import { DataSource } from "typeorm";
+import { UsersResolverTest } from "./resolvers/UsersResolver";
+import { CategoriesResolverTest } from "./resolvers/CategoriesResolver";
 
-const testArgs: {
+export type TestArgsType = {
   server: ApolloServer<BaseContext>;
   datasource: DataSource;
   data: any;
-} = {
+};
+
+const testArgs: TestArgsType = {
   server: null,
   datasource: null,
   data: {},
 };
+
+export function assert(expr: unknown, msg?: string): asserts expr {
+  if (!expr) throw new Error(msg);
+}
 
 beforeAll(async () => {
   await datasource.initialize();
@@ -37,46 +43,14 @@ beforeAll(async () => {
   testArgs.server = testServer;
 });
 
-afterAll(async () => {
-  await datasource.destroy();
+describe("users resolver", () => {
+  UsersResolverTest(testArgs);
 });
 
-describe("users resolver", () => {
-  it("should create an user", async () => {
-    const response = await testArgs.server.executeOperation<{
-      createUser: User;
-    }>({
-      query: mutationCreateUser,
-      variables: {
-        data: {
-          email: "test1@aleygues.fr",
-          password: "SuperSecret!2025",
-        },
-      },
-    });
+describe("categories resolver", () => {
+  CategoriesResolverTest(testArgs);
+});
 
-    expect(response.body.kind === "single");
-    if (response.body.kind === "single") {
-      expect(response.body.singleResult.errors).toBeUndefined();
-      expect(response.body.singleResult.data?.createUser?.id).toBeDefined();
-
-      const userFromDb = await User.findOneBy({
-        id: response.body.singleResult.data?.createUser?.id,
-      });
-      expect(userFromDb).toBeDefined();
-      expect(userFromDb.email).toBe("test1@aleygues.fr");
-      expect(userFromDb.hashedPassword).not.toBe("SuperSecret!2025");
-      testArgs.data.userId = response.body.singleResult.data?.createUser?.id;
-      testArgs.data.userEmail = userFromDb.email;
-    }
-  });
-
-  // test signin resolver
-  /*
-      testArgs.data.userEmail = userFromDb.email;
-  */
-
-  // test whoami resolver
-
-  // test signout
+afterAll(async () => {
+  await datasource.destroy();
 });
