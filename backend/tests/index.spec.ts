@@ -4,6 +4,7 @@ import { datasource } from "../src/datasource";
 import { DataSource } from "typeorm";
 import { UsersResolverTest } from "./resolvers/UsersResolver";
 import { CategoriesResolverTest } from "./resolvers/CategoriesResolver";
+import { AdsResolverTest } from "./resolvers/AdsResolver";
 
 export type TestArgsType = {
   server: ApolloServer<BaseContext>;
@@ -49,6 +50,10 @@ describe("users resolver", () => {
 
 describe("categories resolver", () => {
   CategoriesResolverTest(testArgs);
+});
+
+describe("ads resolver", () => {
+  AdsResolverTest(testArgs);
 });
 
 afterAll(async () => {

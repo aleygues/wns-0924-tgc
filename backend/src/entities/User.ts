@@ -61,7 +61,9 @@ export class User extends BaseEntity {
 @InputType()
 export class UserCreateInput {
   @Field()
-  @IsEmail()
+  @IsEmail({
+    host_blacklist: ["yopmail.com"],
+  })
   email!: string;
 
   @Field()

@@ -5,6 +5,25 @@ import { queryWhoami } from "../api/whoiam";
 import { assert, TestArgsType } from "../index.spec";
 
 export function UsersResolverTest(testArgs: TestArgsType) {
+  it("should not create an user with a disposable email", async () => {
+    const response = await testArgs.server.executeOperation<{
+      createUser: User;
+    }>({
+      query: mutationCreateUser,
+      variables: {
+        data: {
+          email: "test@yopmail.com",
+          password: "SuperSecret!2025",
+        },
+      },
+    });
+
+    // check API response
+    assert(response.body.kind === "single");
+    expect(response.body.singleResult.errors).toBeDefined();
+    expect(response.body.singleResult.data).toBeNull();
+  });
+
   it("should create an admin user", async () => {
     const response = await testArgs.server.executeOperation<{
       createUser: User;

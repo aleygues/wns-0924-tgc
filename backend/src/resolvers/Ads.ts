@@ -14,6 +14,7 @@ import { merge } from "../utils/merge";
 import { AuthContextType } from "../auth";
 import { makeRelations } from "../utils/makeRelations";
 import { GraphQLResolveInfo } from "graphql";
+import axios from "axios";
 
 @Resolver()
 export class AdsResolver {
@@ -49,6 +50,16 @@ export class AdsResolver {
   ): Promise<Ad> {
     const newAd = new Ad();
     Object.assign(newAd, data, { createdBy: context.user });
+
+    const result = await axios.get(
+      `https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(
+        newAd.location
+      )}&type=municipality`
+    );
+
+    if (result.data.features.length === 0) {
+      throw new Error(`Validation error: municipality not found in France`);
+    }
 
     const errors = await validate(newAd);
     if (errors.length > 0) {
