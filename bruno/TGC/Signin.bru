@@ -1,0 +1,35 @@
+meta {
+  name: Signin
+  type: graphql
+  seq: 3
+}
+
+post {
+  url: http://localhost:5000
+  body: graphql
+  auth: none
+}
+
+body:graphql {
+  mutation ($email: String!, $password: String!) {
+    signin(email: $email, password: $password) {
+      id
+    }
+  }
+  
+}
+
+body:graphql:vars {
+  {
+    "email": "{{email}}",
+    "password": "{{password}}"
+  }
+}
+
+tests {
+  test("it should be the same user", () => {
+    const data = res.getBody().data.signin;
+    // Chai
+    expect(data.id === bru.getVar("userId")).to.equal(true);
+  });
+}
