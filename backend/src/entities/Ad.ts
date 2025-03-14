@@ -73,6 +73,11 @@ export class Ad extends BaseEntity {
     // sendNotfication()
   }
 
+  @Field()
+  ageInSeconds() {
+    return Math.floor((Date.now() - this.createdAt.getTime()) / 1000);
+  }
+
   @CreateDateColumn()
   @Field()
   createdAt: Date;

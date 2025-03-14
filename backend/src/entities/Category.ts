@@ -38,17 +38,6 @@ export class Category extends BaseEntity {
   @Field(() => [Ad])
   ads!: Ad[];
 
-  @Field(() => [CategoryLike])
-  likes() {
-    console.log("Computed");
-    return [
-      {
-        createdAt: new Date(),
-        user: "Aurélien",
-      },
-    ];
-  }
-
   @CreateDateColumn()
   @Field()
   createdAt: Date;
