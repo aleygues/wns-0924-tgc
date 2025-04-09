@@ -2,7 +2,7 @@ import Cookies from "cookies";
 import { verify } from "jsonwebtoken";
 import { AuthChecker, MiddlewareFn } from "type-graphql";
 import { User } from "./entities/User";
-
+// test1
 export type ContextType = { req: any; res: any; user: User | null | undefined };
 export type AuthContextType = ContextType & { user: User };
 

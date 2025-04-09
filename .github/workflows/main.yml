@@ -43,7 +43,7 @@ jobs:
       - name: Run test
         run: cd frontend && npm test
   build-frontend:
-    needs: changes
+    needs: [changes, test-frontend]
     if: needs.changes.outputs.frontendChanges == 'true' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
@@ -60,12 +60,12 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          context: ./frontend
+          context: "{{defaultContext}}:frontend"
           tags: ${{ vars.DOCKERHUB_FRONTEND_REPO }}:latest
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
   build-backend:
-    needs: changes
+    needs: [changes, test-backend]
     if: needs.changes.outputs.backendChanges == 'true' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
@@ -82,7 +82,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          context: ./backend
+          context: "{{defaultContext}}:backend"
           tags: ${{ vars.DOCKERHUB_BACKEND_REPO }}:latest
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
