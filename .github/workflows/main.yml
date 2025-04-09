@@ -1,0 +1,28 @@
+name: main
+
+on:
+  push:
+
+jobs:
+  test-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+      - name: Navigate to backend
+        run: cd backend
+      - name: Install
+        run: npm ci
+      - name: Run test
+        run: npm test
+  test-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+      - name: Navigate to frontend
+        run: cd frontend
+      - name: Install
+        run: npm ci
+      - name: Run test
+        run: npm test
