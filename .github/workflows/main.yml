@@ -61,7 +61,7 @@ jobs:
         with:
           push: true
           context: "{{defaultContext}}:frontend"
-          tags: ${{ vars.DOCKERHUB_FRONTEND_REPO }}:latest
+          tags: ${{ vars.DOCKERHUB_FRONTEND_REPO }}:latest, ${{ vars.DOCKERHUB_FRONTEND_REPO }}:{{ github.sha }}
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
   build-backend:
@@ -83,6 +83,6 @@ jobs:
         with:
           push: true
           context: "{{defaultContext}}:backend"
-          tags: ${{ vars.DOCKERHUB_BACKEND_REPO }}:latest
+          tags: ${{ vars.DOCKERHUB_BACKEND_REPO }}:latest, ${{ vars.DOCKERHUB_BACKEND_REPO }}:{{ github.sha }}
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
