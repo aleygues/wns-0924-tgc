@@ -74,7 +74,7 @@ export class Ad extends BaseEntity {
   }
 
   @Field()
-  ageInSeconds() {
+  ageInSeconds(): number {
     return Math.floor((Date.now() - this.createdAt.getTime()) / 1000);
   }
 

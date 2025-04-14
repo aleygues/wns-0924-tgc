@@ -1,6 +1,6 @@
 services:
   front:
-    build: ./frontend
+    image: aleygues/wns0924-tgc-frontend
     # image: mongo
     ports:
       - 5173:5173 # host_port:container_port
@@ -10,15 +10,14 @@ services:
       - ./frontend/public:/app/public
       - ./frontend/vite.config.ts:/app/vite.config.ts
   back:
-    build: ./backend
+    image: aleygues/wns0924-tgc-backend
     ports:
       - 5000:5000 # host_port:container_port
-    environment:
-      - JWT_SECRET_KEY=supersecret
+    # environment:
       # - CHOKIDAR_USEPOLLING=true
     env_file:
       - database.env
-      # - backend.env
+      - backend.env
     volumes:
       - ./backend/src:/app/src # warning between window & linux, should use polling instead of file notification
       # - ./backend/database:/app/database # not needed anymore, was useful for SQLite

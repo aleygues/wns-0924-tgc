@@ -13,6 +13,7 @@ export default defineConfig({
     proxy: {
       "/api": {
         target: "http://back:5000", // or http://localhost:5000 if you are running the front locally with npm run dev
+        ws: true,
       },
     },
   },

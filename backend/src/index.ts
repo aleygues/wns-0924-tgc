@@ -1,37 +1,64 @@
 import "reflect-metadata";
 import { datasource } from "./datasource";
-import { buildSchema } from "type-graphql";
 import { ApolloServer } from "@apollo/server";
-import { startStandaloneServer } from "@apollo/server/standalone";
-import { CategoriesResolver } from "./resolvers/Categories";
-import { AdsResolver } from "./resolvers/Ads";
-import { TagsResolver } from "./resolvers/Tags";
-import { UsersResolver } from "./resolvers/Users";
-import { authChecker, ContextType, getUserFromContext } from "./auth";
+import { ContextType, getUserFromContext } from "./auth";
+import { expressMiddleware } from "@apollo/server/express4";
+import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
+import express from "express";
+import http from "http";
+import cors from "cors";
 import { getSchema } from "./schema";
+import { Server } from "socket.io";
+import { init } from "./socket";
 
-async function initialize() {
+async function start() {
   await datasource.initialize();
-  console.log("Datasource is connected");
 
   const schema = await getSchema();
 
-  const server = new ApolloServer({ schema });
+  const app = express();
+  const httpServer = http.createServer(app);
 
-  const { url } = await startStandaloneServer(server, {
-    listen: { port: 5000 },
-    context: async ({ req, res }) => {
-      const context: ContextType = {
-        req,
-        res,
-        user: undefined,
-      };
-      const user = await getUserFromContext(context);
-      context.user = user; // will be a user or null
-      return context;
-    },
+  init(httpServer);
+
+  const server = new ApolloServer<ContextType>({
+    schema,
+    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
   });
-  console.log(`GraphQL server ready at ${url}`);
+
+  await server.start();
+
+  app.use(
+    "/",
+    /* cors<cors.CorsRequest>({
+      origin: "http://localhost:3000",
+      credentials: true,
+    }), */
+    // 50mb is the limit that `startStandaloneServer` uses, but you may configure this to suit your needs
+    express.json({ limit: "50mb" }),
+    // expressMiddleware accepts the same arguments:
+    // an Apollo Server instance and optional configuration options
+    expressMiddleware(server, {
+      context: async ({ req, res }) => {
+        const context: ContextType = {
+          req,
+          res,
+          user: undefined,
+        };
+        const user = await getUserFromContext(context);
+        context.user = user; // will be a user or null
+        return context;
+      },
+    })
+  );
+
+  // app.post('/files', ...)
+
+  // Modified server startup
+  await new Promise<void>((resolve) =>
+    httpServer.listen({ port: 5000 }, resolve)
+  );
+  console.log(`🚀 Server super ready at http://localhost:5000/`);
 }
 
-initialize();
+start();

@@ -16,6 +16,8 @@ import { SigninPage } from "./pages/Signin";
 import { SignupPage } from "./pages/Signup";
 import { queryWhoami } from "./api/whoiam";
 import { AdminPage } from "./pages/Admin";
+import { useEffect } from "react";
+import { io } from "socket.io-client";
 
 const client = new ApolloClient({
   uri: "/api",
@@ -56,6 +58,19 @@ function checkAuth(
 }
 
 function App() {
+  useEffect(() => {
+    const socket = io("", {
+      path: `/api/socket.io`,
+      hostname: "",
+    });
+    socket.on("error", (e) => console.error(e));
+    socket.on("disconnect", (e) => console.log("Server disconnected"));
+    socket.on("welcome", (message) =>
+      console.log("New welcome message =>", message)
+    );
+    socket.on("message", (message) => console.log("New message =>", message));
+  }, []);
+
   return (
     <ApolloProvider client={client}>
       <BrowserRouter>
