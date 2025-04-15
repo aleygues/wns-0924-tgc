@@ -11,5 +11,3 @@ export default defineConfig({
     hmr: { path: "hmr" },
   },
 });
-
-// nodemon -L ./src/index.ts

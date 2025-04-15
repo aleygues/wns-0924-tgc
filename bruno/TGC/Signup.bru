@@ -1,0 +1,45 @@
+meta {
+  name: Signup
+  type: graphql
+  seq: 2
+}
+
+post {
+  url: http://localhost:5000
+  body: graphql
+  auth: none
+}
+
+body:graphql {
+  mutation($data: UserCreateInput!) {
+    createUser(data: $data) {
+      id
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "data": {
+      "email": "{{email}}",
+      "password": "{{password}}"
+    }
+  }
+}
+
+script:pre-request {
+  bru.setVar("email", `test-${Date.now()}@aleygues.fr`);
+  bru.setVar("password", "SuperSecret!2025");
+}
+
+script:post-response {
+  bru.setVar("userId", res.body.data.createUser.id);
+}
+
+tests {
+  test("it should return a new user ID", () => {
+    const data = res.getBody().data.createUser;
+    // Chai
+    expect(typeof data.id === "string").to.equal(true);
+  });
+}

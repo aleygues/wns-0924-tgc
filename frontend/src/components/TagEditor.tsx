@@ -3,7 +3,7 @@ import { useMutation } from "@apollo/client";
 import { mutationCreateTag } from "../api/createTag";
 import { queryTags } from "../api/tags";
 
-export function TagEditor(props: { onTagCreated: (newId: number) => void }) {
+export function TagEditor(props: { onTagCreated: (newId: string) => void }) {
   const [name, setName] = useState("");
 
   const [doCreateTag] = useMutation(mutationCreateTag, {
@@ -20,7 +20,7 @@ export function TagEditor(props: { onTagCreated: (newId: number) => void }) {
       });
       setName("");
       if (data) {
-        props.onTagCreated(Number(data.createTag.id));
+        props.onTagCreated(data.createTag.id);
       }
     } catch (err) {
       console.error(err);

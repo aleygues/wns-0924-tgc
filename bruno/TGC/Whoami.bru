@@ -1,0 +1,35 @@
+meta {
+  name: Whoami
+  type: graphql
+  seq: 4
+}
+
+post {
+  url: http://localhost:5000
+  body: graphql
+  auth: none
+}
+
+body:graphql {
+  query {
+    whoami {
+      id
+    }
+  }
+  
+}
+
+body:graphql:vars {
+  {
+    "email": "{{email}}",
+    "password": "{{password}}"
+  }
+}
+
+tests {
+  test("it should be the same user", () => {
+    const data = res.getBody().data.whoami;
+    // Chai
+    expect(data.id === bru.getVar("userId")).to.equal(true);
+  });
+}

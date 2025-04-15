@@ -1,11 +1,23 @@
 import { Link } from "react-router-dom";
 import { Category } from "./Category";
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { queryCategories } from "../api/categories";
+import { queryWhoami } from "../api/whoiam";
+import { mutationSignout } from "../api/signout";
 
 export function Navbar() {
-  const { data, loading } = useQuery(queryCategories);
-  const categories = data?.categories;
+  const { data: categoriesData, loading } = useQuery(queryCategories);
+  const categories = categoriesData?.categories;
+
+  const { data: whoamiData } = useQuery(queryWhoami);
+  const me = whoamiData?.whoami;
+
+  const [doSignout] = useMutation(mutationSignout, {
+    refetchQueries: [queryWhoami],
+  });
+  async function onSignout() {
+    doSignout();
+  }
 
   return (
     <header className="header">
@@ -35,10 +47,34 @@ export function Navbar() {
             </svg>
           </button>
         </form>
-        <Link to="/ads/new" className="button link-button">
+        {/* <Link to="/ads/new" className="button link-button">
           <span className="mobile-short-label">Publier</span>
           <span className="desktop-long-label">Publier une annonce</span>
-        </Link>
+        </Link> */}
+        {me ? (
+          <>
+            {me.role === "admin" && (
+              <Link to="/admin" className="button link-button">
+                Admin
+              </Link>
+            )}
+            <Link to="/ads/new" className="button link-button">
+              + Annonce
+            </Link>
+            <button onClick={onSignout} className="button link-button">
+              Déconnexion
+            </button>
+          </>
+        ) : me === null ? (
+          <>
+            <Link to="/signin" className="button link-button">
+              Connexion
+            </Link>
+            <Link to="/signup" className="button link-button">
+              Inscription
+            </Link>
+          </>
+        ) : null}
       </div>
       <nav className="categories-navigation">
         {loading === true && <p>Chargement</p>}

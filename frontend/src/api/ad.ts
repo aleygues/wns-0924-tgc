@@ -9,7 +9,6 @@ export const queryAd = gql(/* GraphQL */ `
       price
       location
       picture
-      owner
       category {
         id
         name
@@ -17,6 +16,11 @@ export const queryAd = gql(/* GraphQL */ `
       tags {
         id
         name
+      }
+      createdAt
+      createdBy {
+        id
+        email
       }
     }
   }

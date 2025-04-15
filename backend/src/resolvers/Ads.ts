@@ -1,65 +1,27 @@
-import { Arg, ID, Int, Mutation, Query, Resolver } from "type-graphql";
 import {
-  Ad,
-  AdCreateInput,
-  AdsWhereInput,
-  AdUpdateInput,
-} from "../entities/Ad";
+  Arg,
+  Authorized,
+  Ctx,
+  ID,
+  Info,
+  Mutation,
+  Query,
+  Resolver,
+} from "type-graphql";
+import { Ad, AdCreateInput, AdUpdateInput } from "../entities/Ad";
 import { validate } from "class-validator";
 import { merge } from "../utils/merge";
-import { And, In, LessThan, Like, MoreThan } from "typeorm";
+import { AuthContextType } from "../auth";
+import { makeRelations } from "../utils/makeRelations";
+import { GraphQLResolveInfo } from "graphql";
+import axios from "axios";
 
 @Resolver()
 export class AdsResolver {
   @Query(() => [Ad])
-  async ads(
-    @Arg("limit", () => Int, { nullable: true }) limit: number,
-    @Arg("offset", () => Int, { nullable: true }) offset: number,
-    @Arg("where", () => AdsWhereInput, { nullable: true }) where: AdsWhereInput
-    // @Arg("orderBy")
-  ): Promise<Ad[]> {
-    const filter: any = {};
-
-    if (where.category) {
-      filter.category = {
-        id: where.category.id,
-      };
-    }
-
-    if (where.tags) {
-      filter.tags = {
-        id: In(where.tags.map((entry) => entry.id)),
-      };
-    }
-
-    if (where.price) {
-      if (where.price.max && where.price.min) {
-        filter.price = And(
-          MoreThan(where.price.min),
-          LessThan(where.price.max)
-        );
-      } else if (where.price.max) {
-        filter.price = LessThan(where.price.max);
-      } else if (where.price.min) {
-        filter.price = MoreThan(where.price.min);
-      }
-    }
-
-    if (where.title) {
-      filter.title = Like(`%${where.title}%`);
-    }
-
+  async ads(@Info() info: GraphQLResolveInfo): Promise<Ad[]> {
     const ads = await Ad.find({
-      relations: {
-        category: true,
-        tags: true,
-      },
-      where: filter,
-      take: limit,
-      skip: offset,
-      /* order: {
-        category.title
-      } */
+      relations: makeRelations(info, Ad),
     });
     return ads;
   }
@@ -71,13 +33,13 @@ export class AdsResolver {
   }
 
   @Query(() => Ad, { nullable: true })
-  async ad(@Arg("id", () => ID) id: number): Promise<Ad | null> {
+  async ad(
+    @Arg("id", () => ID) id: number,
+    @Info() info: GraphQLResolveInfo
+  ): Promise<Ad | null> {
     const ad = await Ad.findOne({
       where: { id },
-      relations: {
-        category: true,
-        tags: true,
-      },
+      relations: makeRelations(info, Ad),
     });
     if (ad) {
       return ad;
@@ -86,12 +48,24 @@ export class AdsResolver {
     }
   }
 
+  @Authorized("user", "admin")
   @Mutation(() => Ad)
   async createAd(
-    @Arg("data", () => AdCreateInput) data: AdCreateInput
+    @Arg("data", () => AdCreateInput) data: AdCreateInput,
+    @Ctx() context: AuthContextType
   ): Promise<Ad> {
     const newAd = new Ad();
-    Object.assign(newAd, data);
+    Object.assign(newAd, data, { createdBy: context.user });
+
+    const result = await axios.get(
+      `https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(
+        newAd.location
+      )}&type=municipality`
+    );
+
+    if (result.data.features.length === 0) {
+      throw new Error(`Validation error: municipality not found in France`);
+    }
 
     const errors = await validate(newAd);
     if (errors.length > 0) {
@@ -102,12 +76,23 @@ export class AdsResolver {
     }
   }
 
+  @Authorized("user", "admin")
   @Mutation(() => Ad, { nullable: true })
   async updateAd(
     @Arg("id", () => ID) id: number,
-    @Arg("data", () => AdUpdateInput) data: AdUpdateInput
+    @Arg("data", () => AdUpdateInput) data: AdUpdateInput,
+    @Ctx() context: AuthContextType
   ): Promise<Ad | null> {
-    const ad = await Ad.findOne({ where: { id }, relations: { tags: true } });
+    const whereCreatedBy =
+      context.user.role === "admin"
+        ? undefined
+        : {
+            id: context.user.id,
+          };
+    const ad = await Ad.findOne({
+      where: { id, createdBy: whereCreatedBy },
+      relations: { tags: true },
+    });
     if (ad !== null) {
       merge(ad, data);
 
@@ -116,7 +101,6 @@ export class AdsResolver {
       if (errors.length > 0) {
         throw new Error(`Validation error: ${JSON.stringify(errors)}`);
       } else {
-        console.log(ad);
         await ad.save();
         return ad;
       }
@@ -125,9 +109,19 @@ export class AdsResolver {
     }
   }
 
+  @Authorized("user", "admin")
   @Mutation(() => Ad, { nullable: true })
-  async deleteAd(@Arg("id", () => ID) id: number): Promise<Ad | null> {
-    const ad = await Ad.findOneBy({ id });
+  async deleteAd(
+    @Arg("id", () => ID) id: number,
+    @Ctx() context: AuthContextType
+  ): Promise<Ad | null> {
+    const whereCreatedBy =
+      context.user.role === "admin"
+        ? undefined
+        : {
+            id: context.user.id,
+          };
+    const ad = await Ad.findOneBy({ id, createdBy: whereCreatedBy });
     if (ad !== null) {
       await ad.remove();
       Object.assign(ad, { id });

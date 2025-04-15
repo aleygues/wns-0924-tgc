@@ -30,9 +30,8 @@ export function AdEditorPage() {
   const [price, setPrice] = useState(100);
   const [location, setLocation] = useState("Villeurbanne");
   const [picture, setPicture] = useState("https://google.com");
-  const [owner, setOwner] = useState("aurelien@aleygues.fr");
-  const [categoryId, setCategoryId] = useState<number | null>();
-  const [tagsIds, setTagsIds] = useState<number[]>([]);
+  const [categoryId, setCategoryId] = useState<string>();
+  const [tagsIds, setTagsIds] = useState<string[]>([]);
 
   useEffect(() => {
     if (ad) {
@@ -41,12 +40,11 @@ export function AdEditorPage() {
       setPrice(ad.price);
       setLocation(ad.location);
       setPicture(ad.picture);
-      setOwner(ad.owner);
-      setCategoryId(ad.category?.id ? Number(ad.category?.id) : null);
+      setCategoryId(ad.category?.id);
 
-      const tagsIds: number[] = [];
+      const tagsIds: string[] = [];
       for (const tag of ad.tags) {
-        tagsIds.push(Number(tag.id));
+        tagsIds.push(tag.id);
       }
       setTagsIds(tagsIds);
     }
@@ -56,7 +54,7 @@ export function AdEditorPage() {
   const categories = categoriesData?.categories;
   useEffect(() => {
     if (categories && categories.length && !categoryId) {
-      setCategoryId(Number(categories[0].id));
+      setCategoryId(categories[0].id);
     }
   }, [categories]);
 
@@ -92,9 +90,8 @@ export function AdEditorPage() {
               price,
               location,
               picture,
-              owner,
-              category: categoryId ? { id: `${categoryId}` } : null,
-              tags: tagsIds.map((id) => ({ id: `${id}` })),
+              category: categoryId ? { id: categoryId } : null,
+              tags: tagsIds.map((id) => ({ id })),
             },
           },
         });
@@ -108,9 +105,8 @@ export function AdEditorPage() {
               price,
               location,
               picture,
-              owner,
-              category: { id: `${categoryId}` },
-              tags: tagsIds.map((id) => ({ id: `${id}` })),
+              category: { id: categoryId as string },
+              tags: tagsIds.map((id) => ({ id })),
             },
           },
         });
@@ -186,19 +182,10 @@ export function AdEditorPage() {
         </label>
         <br />
         <label>
-          Auteur :
-          <input
-            type="text"
-            value={owner}
-            onChange={(e) => setOwner(e.target.value)}
-          />
-        </label>
-        <br />
-        <label>
           Catégorie :
           <select
             value={categoryId ?? ""}
-            onChange={(e) => setCategoryId(Number(e.target.value))}
+            onChange={(e) => setCategoryId(e.target.value)}
           >
             {categories?.map((category) => (
               <option value={category.id} key={category.id}>
@@ -231,18 +218,18 @@ export function AdEditorPage() {
             <label key={tag.id}>
               <input
                 type="checkbox"
-                checked={tagsIds.includes(Number(tag.id)) === true}
+                checked={tagsIds.includes(tag.id) === true}
                 onClick={() => {
-                  if (tagsIds.includes(Number(tag.id)) === true) {
+                  if (tagsIds.includes(tag.id) === true) {
                     const newArray = [];
                     for (const entry of tagsIds) {
-                      if (entry !== Number(tag.id)) {
+                      if (entry !== tag.id) {
                         newArray.push(entry);
                       }
                     }
                     setTagsIds(newArray);
                   } else {
-                    tagsIds.push(Number(tag.id));
+                    tagsIds.push(tag.id);
 
                     const newArray = [];
                     for (const entry of tagsIds) {

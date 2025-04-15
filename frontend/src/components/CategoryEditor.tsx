@@ -4,7 +4,7 @@ import { mutationCreateCategory } from "../api/createCategory";
 import { useMutation } from "@apollo/client";
 
 export function CategoryEditor(props: {
-  onCategoryCreated: (newId: number) => void;
+  onCategoryCreated: (newId: string) => void;
 }) {
   const [name, setName] = useState("");
 
@@ -22,7 +22,7 @@ export function CategoryEditor(props: {
       });
       setName("");
       if (data) {
-        props.onCategoryCreated(Number(data.createCategory.id));
+        props.onCategoryCreated(data.createCategory.id);
       }
     } catch (err) {
       console.error(err);
