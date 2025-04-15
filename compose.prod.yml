@@ -1,42 +1,31 @@
 services:
   front:
-    build: ./frontend
-    # image: mongo
-    ports:
-      - 5173:5173 # host_port:container_port
-    volumes:
-      - ./frontend/index.html:/app/index.html
-      - ./frontend/src:/app/src
-      - ./frontend/public:/app/public
-      - ./frontend/vite.config.ts:/app/vite.config.ts
+    image: aleygues/wns0924-tgc-frontend
+    # override default CMD command for the frontend
+    entrypoint: sh
+    command: -c "npx vite --host"
   back:
-    build: ./backend
-    ports:
-      - 5000:5000 # host_port:container_port
-    # environment:
-      # - CHOKIDAR_USEPOLLING=true
+    image: aleygues/wns0924-tgc-backend
     env_file:
       - database.env
       - backend.env
-    volumes:
-      - ./backend/src:/app/src # warning between window & linux, should use polling instead of file notification
-      # - ./backend/database:/app/database # not needed anymore, was useful for SQLite
   db:
     image: postgres
     ports:
-      - 5432:5432 # host_port:container_port
+      - 4001:5432
     env_file:
       - database.env
     volumes:
-      # enough for local dev
-      # - /var/lib/postgresql/data # creating anonymous volume
       - dbdata:/var/lib/postgresql/data
-
-# With docker, 4 ways to deal with data:
-# - no volume → data are stored in the container (not durable)
-# - ./somesfolderofmycomputer:./somefolderinthecontainer → mount the host filesystem in the container filesystem
-# - /somefolderinthecontainer → mount an anonymous volume managed by docker in the container filesystem
-# - namedvolume:/somefolderinthecontainer → mount a named volume created with Docker but manually managed in the container filesystem
+  nginx:
+    image: nginx
+    volumes:
+      - ./nginx:/etc/nginx
+    ports:
+    - 4000:80
+    depends_on:
+    - back
+    - front
 
 volumes:
   dbdata:
