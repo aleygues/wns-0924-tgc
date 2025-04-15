@@ -9,6 +9,7 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Category } from "./Category";
@@ -16,6 +17,7 @@ import { Tag } from "./Tag";
 import { Field, ID, InputType, Int, ObjectType } from "type-graphql";
 import { IdInput } from "./Id";
 import { User } from "./User";
+import { Message } from "./Message";
 
 @Entity()
 @ObjectType()
@@ -77,6 +79,10 @@ export class Ad extends BaseEntity {
   ageInSeconds(): number {
     return Math.floor((Date.now() - this.createdAt.getTime()) / 1000);
   }
+
+  @OneToMany(() => Message, (message) => message.ad)
+  @Field(() => [Message])
+  messages!: Message[];
 
   @CreateDateColumn()
   @Field()

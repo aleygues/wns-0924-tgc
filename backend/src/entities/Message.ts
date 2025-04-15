@@ -13,6 +13,7 @@ import { Ad } from "./Ad";
 import { Field, ID, InputType, ObjectType } from "type-graphql";
 import { User } from "./User";
 import { sendMessage } from "../socket";
+import { IdInput } from "./Id";
 
 @Entity()
 @ObjectType()
@@ -24,6 +25,10 @@ export class Message extends BaseEntity {
   @Column()
   @Field()
   content!: string;
+
+  @ManyToOne(() => Ad, (ad) => ad.messages)
+  @Field(() => Ad)
+  ad!: Ad;
 
   @CreateDateColumn()
   @Field()
@@ -44,4 +49,7 @@ export class Message extends BaseEntity {
 export class MessageCreateInput {
   @Field()
   content!: string;
+
+  @Field(() => IdInput)
+  ad!: IdInput;
 }

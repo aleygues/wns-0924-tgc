@@ -17,14 +17,25 @@ import { makeRelations } from "../utils/makeRelations";
 @Resolver()
 export class MessagesResolver {
   @Query(() => [Message])
-  async messages(@Info() info: GraphQLResolveInfo): Promise<Message[]> {
+  async messages(
+    @Info() info: GraphQLResolveInfo,
+    @Arg("adId", () => ID) adId: number
+  ): Promise<Message[]> {
     const messages = await Message.find({
       relations: makeRelations(info, Message),
+      where: {
+        ad: {
+          id: adId,
+        },
+      },
+      order: {
+        createdAt: "DESC",
+      },
     });
     return messages;
   }
 
-  @Authorized("user")
+  @Authorized(["user", "admin"])
   @Mutation(() => Message)
   async createMessage(
     @Arg("data", () => MessageCreateInput) data: MessageCreateInput,

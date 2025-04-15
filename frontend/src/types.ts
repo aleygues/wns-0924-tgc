@@ -16,6 +16,13 @@ export type AdType = {
   createdBy: UserType;
 };
 
+export type MessageType = {
+  id: number;
+  content: string;
+  createdAt: string;
+  createdBy: UserType;
+};
+
 export type CategoryType = {
   id: number;
   name: string;
