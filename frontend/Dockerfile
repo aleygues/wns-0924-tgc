@@ -19,6 +19,8 @@ COPY index.html index.html
 COPY public public
 COPY src src
 
+RUN npm run build
+
 EXPOSE 5173
 
 CMD ["npm", "run", "dev-and-codegen"]

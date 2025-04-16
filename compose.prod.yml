@@ -3,7 +3,7 @@ services:
     image: aleygues/wns0924-tgc-frontend
     # override default CMD command for the frontend
     entrypoint: sh
-    command: -c "npx vite --host"
+    command: -c "npx serve dist"
   back:
     image: aleygues/wns0924-tgc-backend
     env_file:
@@ -20,7 +20,7 @@ services:
   nginx:
     image: nginx
     volumes:
-      - ./nginx:/etc/nginx
+      - ./nginx-prod:/etc/nginx
     ports:
     - 4000:80
     depends_on:
