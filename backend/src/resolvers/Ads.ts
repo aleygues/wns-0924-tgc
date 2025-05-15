@@ -15,9 +15,20 @@ import { AuthContextType } from "../auth";
 import { makeRelations } from "../utils/makeRelations";
 import { GraphQLResolveInfo } from "graphql";
 import axios from "axios";
+import { Tag } from "../entities/Tag";
 
 @Resolver()
 export class AdsResolver {
+  @Mutation(() => Tag, { nullable: true })
+  async test() {
+    const tag = Tag.create({ name: "test" });
+    await tag.save();
+    await tag.remove({
+      data: { inkk: 1 },
+    });
+    return null;
+  }
+
   @Query(() => [Ad])
   async ads(@Info() info: GraphQLResolveInfo): Promise<Ad[]> {
     const ads = await Ad.find({

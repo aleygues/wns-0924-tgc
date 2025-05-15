@@ -2,8 +2,14 @@ import Cookies from "cookies";
 import { verify } from "jsonwebtoken";
 import { AuthChecker, MiddlewareFn } from "type-graphql";
 import { User } from "./entities/User";
+import { EntityManager } from "typeorm";
 // test1
-export type ContextType = { req: any; res: any; user: User | null | undefined };
+export type ContextType = {
+  req: any;
+  res: any;
+  user: User | null | undefined;
+  db: EntityManager;
+};
 export type AuthContextType = ContextType & { user: User };
 
 export async function getUserFromContext(

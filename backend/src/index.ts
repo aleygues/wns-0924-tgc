@@ -21,11 +21,14 @@ async function initialize() {
   const { url } = await startStandaloneServer(server, {
     listen: { port: 5000 },
     context: async ({ req, res }) => {
+      const runner = datasource.createQueryRunner();
       const context: ContextType = {
         req,
         res,
         user: undefined,
+        db: datasource.createEntityManager(runner),
       };
+      runner["_context"] = context;
       const user = await getUserFromContext(context);
       context.user = user; // will be a user or null
       return context;

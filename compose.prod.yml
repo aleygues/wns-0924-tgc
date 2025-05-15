@@ -4,11 +4,17 @@ services:
     # override default CMD command for the frontend
     entrypoint: sh
     command: -c "npx serve dist"
+    labels:
+      - fr.aleygues.webhook
+      - fr.aleygues.webhook.id=tgc-front
   back:
     image: aleygues/wns0924-tgc-backend
     env_file:
       - database.env
       - backend.env
+    labels:
+      - fr.aleygues.webhook
+      - fr.aleygues.webhook.id=tgc-back
   db:
     image: postgres
     ports:
