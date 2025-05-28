@@ -13,6 +13,7 @@ import { validate } from "class-validator";
 import { AuthContextType } from "../auth";
 import { GraphQLResolveInfo } from "graphql";
 import { makeRelations } from "../utils/makeRelations";
+import { In } from "typeorm";
 
 @Resolver()
 export class TagsResolver {
@@ -40,14 +41,14 @@ export class TagsResolver {
     }
   }
 
-  @Authorized("admin")
+  @Authorized("user")
   @Mutation(() => Tag)
   async createTag(
     @Arg("data", () => TagCreateInput) data: TagCreateInput,
     @Ctx() context: AuthContextType
   ): Promise<Tag> {
     const newTag = new Tag();
-    Object.assign(newTag, data, { createdBy: context.user });
+    Object.assign(newTag, data, { createdBy: 29 });
 
     const errors = await validate(newTag);
     if (errors.length > 0) {
@@ -81,15 +82,15 @@ export class TagsResolver {
     }
   }
 
-  @Authorized("admin")
+  @Authorized("user")
   @Mutation(() => Tag, { nullable: true })
   async deleteTag(
     @Arg("id", () => ID) id: number,
     @Ctx() context: AuthContextType
   ): Promise<Tag | null> {
-    const tag = await Tag.findOneBy({ id, createdBy: { id: context.user.id } });
+    const tag = await Tag.findOneBy({ id });
     if (tag !== null) {
-      await tag.remove();
+      await context.db.remove(tag);
       return tag;
     } else {
       return null;

@@ -5,7 +5,6 @@ import {
   Entity,
   ManyToMany,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Ad } from "./Ad";
@@ -15,6 +14,12 @@ import { User } from "./User";
 @Entity()
 @ObjectType()
 export class Tag extends BaseEntity {
+  accesses = {
+    read: ["user"],
+    update: ["admin", "user:sameUser"],
+    delete: ["admin", "user:sameUser"],
+  };
+
   @PrimaryGeneratedColumn()
   @Field(() => ID)
   id!: number;
