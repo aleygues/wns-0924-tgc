@@ -55,7 +55,7 @@ export function AdPage() {
       <p>{ad.category?.name}</p>
       <p>Créée par {ad.createdBy?.email ?? "(information cachée)"}</p>
       {/* Should be displayed only for admins and author */}
-      {(me?.role === "admin" || me?.id === ad.createdBy.id) && (
+      {(me?.role === "admin" || me?.id === ad.createdBy?.id) && (
         <>
           <button onClick={onDelete}>Supprimer l'offre</button>
           <button onClick={onUpdate}>Modifier l'offre</button>

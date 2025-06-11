@@ -43,6 +43,10 @@ services:
     depends_on:
     - back
     - front
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
 
 # With docker, 4 ways to deal with data:
 # - no volume → data are stored in the container (not durable)

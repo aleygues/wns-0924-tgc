@@ -30,6 +30,7 @@
     "graphql-scalars": "^1.23.0",
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.13.1",
+    "redis": "^4.7.1",
     "reflect-metadata": "^0.2.2",
     "type-graphql": "^2.0.0-rc.2",
     "typeorm": "^0.3.20"

@@ -7,6 +7,7 @@ export function RecentAds() {
   const { data, loading } = useQuery(queryAds, {
     variables: {
       withCount: true,
+      title: "#12",
     },
     fetchPolicy: "cache-and-network",
   });

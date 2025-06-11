@@ -4,6 +4,7 @@ import {
   Ctx,
   ID,
   Info,
+  Int,
   Mutation,
   Query,
   Resolver,
@@ -15,15 +16,43 @@ import { AuthContextType } from "../auth";
 import { makeRelations } from "../utils/makeRelations";
 import { GraphQLResolveInfo } from "graphql";
 import axios from "axios";
+import { Between, FindOneOptions, ILike } from "typeorm";
+import { redis } from "../redis";
 
 @Resolver()
 export class AdsResolver {
   @Query(() => [Ad])
-  async ads(@Info() info: GraphQLResolveInfo): Promise<Ad[]> {
-    const ads = await Ad.find({
-      relations: makeRelations(info, Ad),
-    });
-    return ads;
+  async ads(
+    @Info() info: GraphQLResolveInfo,
+    @Arg("price", () => Int, { nullable: true }) price?: number,
+    @Arg("title", { nullable: true }) title?: string
+  ): Promise<Ad[]> {
+    const where: FindOneOptions<Ad>["where"] = {};
+
+    if (price) {
+      where.price = Between(price - 1000, price + 1000);
+    }
+
+    if (title) {
+      where.title = ILike(`%${title}%`);
+    }
+
+    const key = "ads:" + JSON.stringify(where);
+
+    const cache = await redis.get(key);
+
+    if (cache) {
+      console.log("Chache hit");
+      return cache;
+    } else {
+      const ads = await Ad.find({
+        relations: makeRelations(info, Ad),
+        where,
+      });
+      await redis.set(key, ads);
+      console.log("Cache set");
+      return ads;
+    }
   }
 
   @Query(() => Number)

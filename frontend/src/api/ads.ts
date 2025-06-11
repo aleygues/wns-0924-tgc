@@ -1,8 +1,8 @@
 import { gql } from "../gql";
 
 export const queryAds = gql(/* GraphQL */ `
-  query ads($offset: Int, $limit: Int, $withCount: Boolean = false) {
-    ads {
+  query ads($withCount: Boolean = false, $title: String) {
+    ads(title: $title) {
       id
       title
       picture
