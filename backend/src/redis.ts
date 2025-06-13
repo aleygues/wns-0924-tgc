@@ -18,6 +18,15 @@ export const redis = {
       return null;
     }
   },
+  clear: async function (key: string) {
+    await client?.del([key]);
+  },
+  clearKeysStartingWith: async function (key: string) {
+    const keys = await client?.keys(`${key}:*`);
+    if (!!keys?.length) {
+      await client?.del(keys);
+    }
+  },
 };
 
 /* client.destroy(); */
