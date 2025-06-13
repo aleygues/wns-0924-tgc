@@ -7,8 +7,8 @@ const client = createClient({
 client.on("error", (err) => console.log("Redis Client Error", err)).connect();
 
 export const redis = {
-  set: async (key: string, value: any) => {
-    await client.set(key, JSON.stringify(value));
+  set: async (key: string, value: any, expInSeconds?: number) => {
+    await client.set(key, JSON.stringify(value), { EX: expInSeconds });
   },
   get: async (key: string): Promise<any | null> => {
     const cache = await client.get(key);

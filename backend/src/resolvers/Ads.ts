@@ -18,6 +18,7 @@ import { GraphQLResolveInfo } from "graphql";
 import axios from "axios";
 import { Between, FindOneOptions, ILike } from "typeorm";
 import { redis } from "../redis";
+import crypto from "crypto";
 
 @Resolver()
 export class AdsResolver {
@@ -37,7 +38,9 @@ export class AdsResolver {
       where.title = ILike(`%${title}%`);
     }
 
-    const key = "ads:" + JSON.stringify(where);
+    const key =
+      "ads:" +
+      crypto.createHash("SHA256").update(JSON.stringify(where)).digest("hex");
 
     const cache = await redis.get(key);
 
@@ -49,7 +52,7 @@ export class AdsResolver {
         relations: makeRelations(info, Ad),
         where,
       });
-      await redis.set(key, ads);
+      await redis.set(key, ads, 60);
       console.log("Cache set");
       return ads;
     }
@@ -101,6 +104,10 @@ export class AdsResolver {
       throw new Error(`Validation error: ${JSON.stringify(errors)}`);
     } else {
       await newAd.save();
+
+      // invalidate cache
+      await redis.clearKeysStartingWith("ads");
+
       return newAd;
     }
   }
@@ -131,6 +138,8 @@ export class AdsResolver {
         throw new Error(`Validation error: ${JSON.stringify(errors)}`);
       } else {
         await ad.save();
+        // invalidate cache
+        await redis.clearKeysStartingWith("ads");
         return ad;
       }
     } else {
@@ -153,6 +162,8 @@ export class AdsResolver {
     const ad = await Ad.findOneBy({ id, createdBy: whereCreatedBy });
     if (ad !== null) {
       await ad.remove();
+      // invalidate cache
+      await redis.clearKeysStartingWith("ads");
       Object.assign(ad, { id });
       return ad;
     } else {
