@@ -22,10 +22,10 @@ services:
     volumes:
       - ./nginx-prod:/etc/nginx
     ports:
-    - 4000:80
+      - 4000:80
     depends_on:
-    - back
-    - front
+      - back
+      - front
 
 volumes:
   dbdata:

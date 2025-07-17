@@ -13,14 +13,14 @@ services:
       - ./frontend/vite.config.ts:/app/vite.config.ts
   back:
     build: ./backend
-    # the port entry is not necessary with NGINX as a reverse proxy!
-    # ports:
-    #   - 5000:5000 # host_port:container_port
-    # environment:
+    ports:
+      - 5000:5000 # host_port:container_port
+    environment:
+      - JWT_SECRET_KEY=supersecret
       # - CHOKIDAR_USEPOLLING=true
     env_file:
       - database.env
-      - backend.env
+      # - backend.env
     volumes:
       - ./backend/src:/app/src # warning between window & linux, should use polling instead of file notification
       # - ./backend/database:/app/database # not needed anymore, was useful for SQLite
@@ -39,10 +39,10 @@ services:
     volumes:
       - ./nginx:/etc/nginx
     ports:
-    - 8080:80
+      - 8080:80
     depends_on:
-    - back
-    - front
+      - back
+      - front
 
 # With docker, 4 ways to deal with data:
 # - no volume → data are stored in the container (not durable)
