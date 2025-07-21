@@ -6,10 +6,9 @@ import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 import express from "express";
 import http from "http";
-import cors from "cors";
 import { getSchema } from "./schema";
-import { Server } from "socket.io";
 import { init } from "./socket";
+import { getRoutes } from "./routes";
 
 async function start() {
   await datasource.initialize();
@@ -27,6 +26,8 @@ async function start() {
   });
 
   await server.start();
+
+  app.use(getRoutes());
 
   app.use(
     "/",

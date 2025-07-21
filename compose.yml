@@ -24,6 +24,7 @@ services:
     volumes:
       - ./backend/src:/app/src # warning between window & linux, should use polling instead of file notification
       # - ./backend/database:/app/database # not needed anymore, was useful for SQLite
+      - ./uploads:/app/uploads
   db:
     image: postgres
     ports:
@@ -43,6 +44,12 @@ services:
     depends_on:
       - back
       - front
+  imgproxy:
+    image: ghcr.io/imgproxy/imgproxy:latest
+    ports:
+      - 3020:8080
+    environment:
+      - IMGPROXY_BASE_URL=http://back:5000/images/
 
 # With docker, 4 ways to deal with data:
 # - no volume → data are stored in the container (not durable)
