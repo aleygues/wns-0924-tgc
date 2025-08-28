@@ -49,6 +49,10 @@ export class Ad extends BaseEntity {
   @Field({ nullable: true })
   description!: string;
 
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  description2!: string;
+
   @Column()
   @Field()
   location!: string;

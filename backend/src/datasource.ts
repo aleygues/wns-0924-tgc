@@ -36,6 +36,8 @@ export class AccessesSubscriber implements EntitySubscriberInterface<any> {
   }
 }
 
+const syncMode = process.env.NODE_ENV === "dev";
+
 export const datasource = new DataSource({
   type: "postgres",
   host: process.env.POSTGRES_HOST ?? "db", // 172.12.10.10
@@ -44,7 +46,9 @@ export const datasource = new DataSource({
   password: process.env.POSTGRES_PASSWORD,
   database: process.env.POSTGRES_DB,
   entities: ["./src/entities/*.ts"],
-  synchronize: true,
+  synchronize: syncMode,
+  migrations: ["./migrations/*.ts"],
+  migrationsRun: !syncMode,
   logging: true,
   subscribers: [AccessesSubscriber],
 });

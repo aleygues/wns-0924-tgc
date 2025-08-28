@@ -12,6 +12,7 @@ RUN npm install
 
 COPY tsconfig.json tsconfig.json
 COPY src src
+COPY migrations migrations
 
 EXPOSE 5000
 

@@ -23,6 +23,7 @@ services:
       - backend.env
     volumes:
       - ./backend/src:/app/src # warning between window & linux, should use polling instead of file notification
+      - ./backend/migrations:/app/migrations
       # - ./backend/database:/app/database # not needed anymore, was useful for SQLite
   db:
     image: postgres
